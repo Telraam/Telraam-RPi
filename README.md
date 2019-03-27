@@ -25,18 +25,25 @@ For more information (in Dutch) and the live traffic map, please visit the [Terl
 
 In this repository we make the script that runs on the Rapsberry Pi computers at each Telraam user available to the public. The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original script developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
 
-Below you will find a list of dependencies that are needed for the script to run, a link to a detailed documentation that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of developement goals that we would like the community to pay special attention to.
+Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-RPi#dependencies) that are needed for the script to run, a link to a detailed [documentation](https://github.com/Telraam/Telraam-RPi#detailed-documentation) that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of [developement goals](https://github.com/Telraam/Telraam-RPi#developement-goals) that we would like the community to pay special attention to.
 
 #### Dependencies
 
-...
+- Python 3
+- OpenCV
+- Numpy
+- Matplotlib
+- Pandas
+- Pytz
+- Sklearn
+- Scipy
 
 #### Detailed documentation
 
-...
+There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in [code_documantation.md](./code_documantation.md)
 
 #### Developement goals
 
-- [ ] Advanced (Bayesian) tracking
-- [ ] Compressed data transfer to the server
-- [ ] ...
+- [ ] Advanced (Bayesian) tracking.
+- [ ] Compressed (binary) data transfer to the server.
+- [ ] Go wild, anything that can improve the speed and quality of image processing, object matching and tracking, and data transfer.
