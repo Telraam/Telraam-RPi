@@ -42,4 +42,5 @@ There is extensive documentation in the form of end-of-the-line comments in the 
 
 - [ ] Advanced (Bayesian) tracking.
 - [ ] Compressed (binary) data transfer to the server.
+- [ ] Properly parallelise observing and tracking loops (assuming the Bayesian tracking can be made real-time speed, during active observing the contour data from the previous obsereving window could be tracked and transferred, saving valuable uptime).
 - [ ] Go wild, anything that can improve the speed and quality of image processing, object matching and tracking, and data transfer.
