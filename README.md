@@ -40,7 +40,8 @@ There is extensive documentation in the form of end-of-the-line comments in the 
 
 #### Developement goals
 
-- [ ] Advanced (Bayesian) tracking.
+- [ ] Advanced (Bayesian) tracking (that is capable of handling special cases, such as object overlaps, merging and separating objects, etc. better).
 - [ ] Compressed (binary) data transfer to the server.
 - [ ] Properly parallelise observing and tracking loops (assuming the Bayesian tracking can be made real-time speed, during active observing the contour data from the previous obsereving window could be tracked and transferred, saving valuable uptime).
+- [ ] Better background calculation logic that can handle situations with traffic standstills better.
 - [ ] Go wild, anything that can improve the speed and quality of image processing, object matching and tracking, and data transfer.
