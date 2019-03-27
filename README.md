@@ -1,5 +1,7 @@
 # Telraam
 
+What is Telraam?
+
 ## Telraam on the Raspberry Pi
 
-The script that runs on the Telraam Raspberry Pi computers, responsible for traffic monitoring and communicating with the central Telraam server.
+In this repository we make the script that runs on the Rapsberry Pi computers at each Telraam user available to the public.
