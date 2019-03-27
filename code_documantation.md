@@ -11,7 +11,7 @@ sudo modprobe bcm2835-v4l2
 python3 Telraam.py --test --display --idandtrack --rotate 180
 ```
 
-The first command is needed in order to enable directly access the camera using openCV instead of using a slower Python library. Skip --test --display --idandtrack if you just want it without display and test data, use --fov alone if you just want to set the field of view, and --rotate 180 if camera is installed upside down)
+The first command is needed in order to enable directly access the camera using openCV instead of using a slower Python library. Skip --test --display --idandtrack if you just want it without display and test data, use --fov alone if you just want to set the field of view, and --rotate 180 if camera is installed upside down. Keep in mind that --display has a huge hit on the frame rate, so only use that for specific testing.)
 
 ## Sketch of the script
 
@@ -19,10 +19,52 @@ The script builds around a cycle of **[1) Background calibration](https://github
 
 These main parts have their own challenges, but a major guideline is that we try to keep everything as simple as possible that needs to run on the Raspberry Pi real-time, as frame-rate seems to be a bottleneck at this time. (With no displays enabled, we are running at around 30 FPS).
 
-## 1) Background calibration
+### 1) Background calibration
 
-## 2) Object (contour) detection
+**Goal:** The first task is deriving a background image, that we can use as reference afterwards.
 
-## 3) Data transfer
+**Implementation:** This part simply collects a set of frames and then calculates the median of them. How often (minimum and preferably) and for how long this runs is specified by parameters (e.g., every 5-6 minutes and for 1 minute, or every 2.5-3 minutes for 30 seconds – latter seems to handle better light/shadow areas moving across the frame on clear days). Before each background calibration a small function sets the exposure time (and fixes all camera settings manually), so camera settings are consistent during background calculations. (Light levels can change during background calculation cycles, this is taken into account in step 2) with a flexible threshold level.) If the light levels are insufficiently low (or too high – which is unlikely to happen), the loop pauses for 5 minutes then retries (and an empty data stream also happens to still communicate to the server that the camera is up and running.)
 
-## 4) Object tracking
+**Notes:** OpenCV has background detection methods that do not need the calculation of a global background frame (instead they work from frame-by-frame differences, etc.), but they are an order of magnitude slower, and the results provided are not significantly better (e.g., it has issues with objects that slow down, stop, then start moving again -> in the stopped phase these are not properly detected) – although the speed bottleneck is the main reason against using them. 
+
+It would be also an option to do without a dedicated background calculation interval to have an image buffer (that contains the last minute of images) and always calculate the median of this as background, but moving the frames always into a 3D image array takes up way too much resources, which again means that we cannot seem to be able to do this.
+
+We also experimented with using frame-by-frame differences, but the situation there is even further from universal, so we decided against following this direction. Main issues with frame-by-frame tracking are the following: slowly moving objects (pedestrians further away from the camera, or slowly rolling cars in high traffic situation) are not picked up properly or at all, therefore tracking these object becomes impossible. One object creates a complex structure of shapes in the frame-by-frame differential images, which creates a much more complex tracking and identification problem (meaning multiple shapes will make up one object, and these shapes might not even be close to each other, as the leading and trailing edge of a truck will create two shapes, but in between there will be no difference as the side of the truck has the same colour, so shifting it left or right does not make a difference on the level of given pixels).
+
+**Current challenges:** there is still the issue that in situations where long standstills can occur in traffic (even in non-congested situations as, e.g., the traffic light in one direction is longer red than green), which mean that the median background can sometimes include the image of one or several stopped vehicles. These ghost-objects result in stationary ghost-detections that will significantly worsen the situation by merging any two objects that touch them at the same time, and by separating one object into possibly multiple objects (which can still be solved in post processing). The biggest issue is that when many of these ghost-objects are detected in the field of view, that can lead to actual objects being constantly merged with these ghost-contours as they move across the frame. This might mean that all the time only one object contour is detected that contains maybe no, but maybe multiple objects. This is an issue that cannot be solved in the post processing stage. An additional issue is that this can occur anywhere in congested situations, especially when the flow is really slow and distance between cars is minimal (this leads to the background surface not being visible for more than 50% of the time). The only solution to these problems would be somehow knowing which pixels are background and which are not already during the background calculation, but this seems to be a very difficult nut to crack. In practice, this only presents as a complication at a limited number of cases (if the traffic flow is not continuous enough; e.g., streets with congestion, or cameras placed very close to traffic lights).
+
+### 2) Object (contour) detection
+
+**Goal:** The second task is to identify areas in the background-subtracted image that contain (possible) objects.
+
+**Implementation:** The main idea of the implementation is very simple: by applying a threshold on the background-subtracted image, we define a binary image where pixels are either objects (1) or not (0). Then on this binary image we perform a contour-detection, and then take all top level contours as object candidates.
+
+For these contours many parameters are saved (such as centroid positions, area, width, and height).
+
+**Notes:** Before the threshold is applied, some minor transformations are preformed; mainly we apply a small Gaussian blur to filter out noise, and smoothen detected shapes which both result in a better, more precise, and faster contour detection later.
+
+We experimented using opening and closing instead of the blur, but these are all frame-rate killers (as they take much more time to calculate), so we really cannot do that. Even using a simple square 10x10 kernel, the speed would be half compared to a simple blurring algorithm.
+
+The applied threshold is dynamic, and it depends on the histogram of the background-subtracted image. This is necessary because between background calculations the overall brightness of the scenery will most often change (due to many variables, e.g., the light levels changing simply because the Sun gets higher/lower, clouds roll over, etc.), therefore overall the deviation from an earlier background will not be constant even if there is no change in the scenery at all. For example, if the overall luminance of the field grows, then the background-subtracted image will not be all zeros, but for example all tens or more. As the deviation grows larger, larger parts of the image would be pushed above a fixed threshold. This is circumvented in this script by fixing the threshold to be a given (parameter-controlled) value over the ever-changing level in the histogram under which 50% of all pixel count can be found. This 50% will be dominated by the values of the actual non-changed but maybe brightened or darkened background pixels of the background-subtracted image. This region will not really be influenced by objects crossing the screen as their pixels will be typically much brighter on the differential image, and since objects have various shades of colors over them, these pixels will not cluster around a given intensity value as much either as the values corresponding to the background. (This might sound complicated, but running the script in --display mode this is also visualised.)
+
+**Current challenges:** It is more in the data processing part, but let us note it here: detecting contours themselves is not really a challenge. But it happens that one object is detected as multiple contours (for example people can wear coats or sweaters that have the same luminance as the background, so their feet and head will be a different blob), or multiple objects can be recorded as one contour (in case of merging, overlaps, etc). These need to be handled in post processing. When one object is visible as two separated by a small distance should be easy to handle, but for example when there is a continuous overlap during the whole visibility of multiple objects, there we will not able to detect them as multiple objects with a simple solution. In small traffic streets therefore we expect to have nearly no issues, but in high traffic streets with multiple lanes simultaneously occupied in the field of view there will be issues. Long shadow/light borders sweeping through the frame can also influence object sizes and can cause more frequent merging, but right now we have no way of avoiding this.
+
+### 3) Data transfer
+
+**Goal:** Transfer data to the server. 
+
+**Implementation:** Simply when a given amount of time (a preferred time if frame of view empty, or a maximum time if there is constant traffic in the frame) has elapsed between two data dumps, or it is time for a new background calculation, we transfer the data. Since contours are continuously collected in a numpy array, data transfer here is as easy as sending that array through to the server (for the raw data, and sending a processed output with the actual object data).
+
+**Notes:** We send some data (Telraam ID - derived from the MAC address of the wifi chip on the RPi -, timestamp, and all zeros elsewhere) even if there were no contours/objects observed, or if there is no active observing going on because it is too dark/bright (then last record is -1 or -2 to differentiate from no objects observed when it is 0) outside (latter never happens) so the server knows that a given Telraam is still working.
+
+Because of the background calculation loops, some part of the cycle is not spent observing, so this somehow needs to be corrected for if we need to get the actual traffic volumes (e.g. a 30 sec background calculation cycle and 2.5 minutes recording – assuming that data transfer is more or less instantaneous – means that 1/6th of the total time is not actual observing time, therefore volumes should be taken at ~120% observed). For this reason we save the beginning and the end of the observing times, and from this it can be calculated how much time in the 1 hour windows that are shown on the Terlaam site was downtime. This information is also sent to the database (MAC address, start time, end time, status code).
+
+If the wifi connection of the user or the server goes down, the telraam will still keep observing and store the not yet transferred data in a buffer, so there is no extra downtime introduced by loss of connection. If the data to be transferred is too large, it is broken into smaller packets and transferred in pieces.
+
+As ID we use the decimal version of the MAC address of the wifi chip of the RPi. These are globally unique.
+
+The following properties are transferred per contour: MAC address, time of the observation (UNIX seconds), x coordinate, y coordinate, size, width, height.
+
+**Current challenges:** If we also transfer raw contour data, there is a too big load on the server. Storing raw contour data is useful because it enables reprocessing of the data in the future with, e.g., a better tracking algorithm, but it also means approximately two orders of magnitudes more data... For now, transfer of the raw contour data is commented out, but we would like to reenable this in the future.
+
+### 4) Object tracking
