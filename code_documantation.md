@@ -4,7 +4,7 @@ Our goal is to detect moving objects (pedestrians, bikers, cars, and trucks) in 
 
 #### Running the script
 
-To run the current test version of the script with all testing options enabled:
+**To run the current test version of the script with all testing options enabled:**
 
 ```
 sudo modprobe bcm2835-v4l2
@@ -13,7 +13,7 @@ python3 Telraam.py --test --display --idandtrack --rotate 180
 
 The first command is needed in order to enable directly access the camera using openCV instead of using a slower Python library. Skip --test --display --idandtrack if you just want it without display and test data, use --fov alone if you just want to set the field of view, and --rotate 180 if camera is installed upside down. Keep in mind that --display has a huge hit on the frame rate, so only use that for specific testing.)
 
-When you decide to make a test-setup, please consult the **[camera placement notes](./camera_placement_notes.md)** first!
+**When you decide to make a test-setup, please consult the [camera placement notes](./camera_placement_notes.md)** first!
 
 ## Sketch of the script
 
