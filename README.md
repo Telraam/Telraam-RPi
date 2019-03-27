@@ -36,7 +36,7 @@ Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-
 
 #### Detailed documentation
 
-There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in [code_documantation.md](./code_documantation.md)
+There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in **[code_documantation.md](./code_documantation.md)**
 
 #### Developement goals
 
