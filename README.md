@@ -30,7 +30,7 @@ Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-
 #### Dependencies
 
 - Python 3.6 (and some standard libraries)
-- OpenCV 3.4.4
+- OpenCV 3.4.3
 - Numpy
 - Pandas
 
