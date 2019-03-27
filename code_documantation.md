@@ -68,3 +68,19 @@ The following properties are transferred per contour: MAC address, time of the o
 **Current challenges:** If we also transfer raw contour data, there is a too big load on the server. Storing raw contour data is useful because it enables reprocessing of the data in the future with, e.g., a better tracking algorithm, but it also means approximately two orders of magnitudes more data... For now, transfer of the raw contour data is commented out, but we would like to reenable this in the future.
 
 ### 4) Object tracking
+
+**Goal:*** The goal is identifying individual objects from a large set of contour time series, possibly handle overlaps (where multiple objects are detected as one single contour) and segmented objects (where one object is detected as multiple smaller contours). The two latter are not implemented yet.
+
+**Implementation:** Right now this step is implemented on the RPi, but we need a) a more sophisticated method, b) consider moving it to the server side. 
+
+What right now is available is an algorithm based on (but extended with extra features) the main ideas presented [here](http://jorgemoreno.xyz/pycvtraffic.php)
+
+The main loop is the following:
+1. Let’s assume we detect one object on the first frame. This is given an ID, and we save its properties into a dataframe. When we process the next frame, let’s assume we find two contours. For each of these we check if they are within a threshold to any object on the previous frame (we require that an object’s movement from the previous frame is maximum half the object’s larger axis – as small objects usually move slower), if yes, then we know we have found the same object on this frame, so it gets the same ID, if not, this is a new object with a new ID., etc.
+2. For each frame that contains objects we save the properties of each object under the corresponding ID.
+3. For the final data that would be transferred to the server we calculate average properties of each object, plus add the starting time, interval, and number of frames observed for each of them. To decide if an observed object is real or is a result of some artefact (moving leaves, shadows, etc.) we require that real objects have a trajectory (the difference between the two furthest observed centroid locations) of at least half the vertical image dimension (which helps filtering out waving trees, moving shadows or light spots reflected from windows, etc.). (On the server there are furthere tests.)
+
+**Notes:** The following properties are saved per object: MAC address, time of the first observation, average x coordinate, average y coordinate, average speed in x, average speed in y, average size, average horizontal size, average vertical size, trajectory length, duration of observations, number of frames being observed for given object.
+
+**Current challenges:** We need to include some sort of Bayesian tracking, where functions describe probabilities, objects need to be added, tracked, and removed from the frame, etc. The current version will fail in busy situations where overlaps are frequent.
+
