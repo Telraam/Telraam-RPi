@@ -71,7 +71,7 @@ The following properties are transferred per contour: MAC address, time of the o
 
 ### 4) Object tracking
 
-**Goal:*** The goal is identifying individual objects from a large set of contour time series, possibly handle overlaps (where multiple objects are detected as one single contour) and segmented objects (where one object is detected as multiple smaller contours). The two latter are not implemented yet.
+**Goal:** The goal is identifying individual objects from a large set of contour time series, possibly handle overlaps (where multiple objects are detected as one single contour) and segmented objects (where one object is detected as multiple smaller contours). The two latter are not implemented yet.
 
 **Implementation:** Right now this step is implemented on the RPi, but we need a) a more sophisticated method, b) consider moving it to the server side. 
 
