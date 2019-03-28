@@ -1,6 +1,6 @@
 # Telraam
 
-**Telraam is an affordable and yet intricate traffic-monitoring network built around a cluster of low-cost sensors and a central server. It is a collaboration between [Transport & Mobility Leuven (TML)](https://www.tmleuven.be/en/), [Mobiel 21](https://www.mobiel21.be/) en [Waanz.in](https://waanz.in/) that is financed by the Smart Mobility Belgium Grant of the Federal Government.**
+**Telraam is an affordable and yet intricate traffic-monitoring network built around a cluster of low-cost sensors and a central server. It is a collaboration between [Transport & Mobility Leuven (TML)](https://www.tmleuven.be/en/), [Mobiel 21](https://www.mobiel21.be/), and [Waanz.in](https://waanz.in/), that is financed by the Smart Mobility Belgium Grant of the Federal Government.**
 
 Precisely measured traffic volumes are essential for transport-related studies. Within the Telraam-project, we develop an integrated application based on low-cost hardware, a central database and processing server, and a public online platform allowing citizens to contibute to automated real-time traffic counts.
 
