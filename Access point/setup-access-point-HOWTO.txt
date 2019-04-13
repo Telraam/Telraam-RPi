@@ -1,0 +1,135 @@
+# ------------------------------------------
+# CREATE ACCESS POINT & CONFIGURE LOGIN PAGE
+# ------------------------------------------
+
+# ====================
+# SETUP MYSQL DATABASE
+# ====================
+sudo apt install python-mysqldb
+sudo apt install python3-mysqldb
+
+sudo mysql
+CREATE DATABASE telraam;
+USE telraam;
+CREATE TABLE connection(wifi_ssid VARCHAR(32),wifi_pwd VARCHAR(64));
+GRANT ALL PRIVILEGES ON * . * TO 'pi'@'localhost' IDENTIFIED BY 'pi';
+exit
+
+# ===================
+# SETUP LOGIN WEBPAGE
+# ===================
+sudo cp index.php /var/www/html/
+
+# ===================
+# SETUP CAMERA STREAM
+# ===================
+(based on https://picamera.readthedocs.io/en/latest/recipes2.html#web-streaming)
+cp telraam_camera_stream.py /home/pi/Telraam/Scripts/
+sudo chmod +x /home/pi/Telraam/Scripts/telraam_camera_stream.py
+
+sudo cp telraam_camera_stream.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/telraam_camera_stream.service
+sudo systemctl daemon-reload
+sudo systemctl enable telraam_camera_stream.service
+# to stop the service: sudo systemctl stop telraam_camera_stream.service 
+
+# =======================
+# SETUP MONITORING SCRIPT
+# =======================
+cp telraam_monitoring.py /home/pi/Telraam/Scripts/
+sudo chmod +x /home/pi/Telraam/Scripts/telraam_monitoring.py
+
+sudo cp telraam_monitoring.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/telraam_monitoring.service
+sudo systemctl daemon-reload
+sudo systemctl enable telraam_monitoring.service
+# to stop the service: sudo systemctl stop telraam_monitoring.service 
+
+# ==================
+# SETUP ACCESS POINT
+# ==================
+sudo rpi-update
+sudo apt install dnsmasq hostapd -y
+sudo systemctl stop dnsmasq
+sudo systemctl stop hostapd
+
+sudo nano /etc/dhcpcd.conf
+-> append with the following
+--------------
+# TELRAAM
+interface wlan0
+	static ip_address=192.168.254.1/24
+	nohook wpa_supplicant
+--------------
+
+sudo service dhcpcd restart
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+sudo nano /etc/dnsmasq.conf
+-> append with the following
+---------
+interface=wlan0
+	dhcp-range=192.168.254.2,192.168.254.254,255.255.255.0,24h
+----------
+
+sudo nano /etc/hostapd/hostapd.conf
+-> append with the following
+----------
+interface=wlan0
+driver=nl80211
+ssid=TELRAAM
+hw_mode=g
+channel=7
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=TelraamTelraam
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+----------
+
+sudo nano /etc/default/hostapd
+-> replace #DAEMON_CONF with DAEMON_CONF="/etc/hostapd/hostapd.conf"
+sudo systemctl start hostapd
+sudo systemctl start dnsmasq
+sudo nano /etc/sysctl.conf
+-> uncomment net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+sudo nano /etc/rc.local
+-> add before "exit 0"
+------------
+#sudo ifconfig eth0 down
+sudo iptables-restore < /etc/iptables.ipv4.nat
+------------
+reboot
+
+# ========================
+# SETUP WIFI ACCESS SCRIPT
+# ========================
+cp telraam_ap_control_loop.py /home/pi/Telraam/Scripts/
+sudo chmod +x /home/pi/Telraam/Scripts/telraam_ap_control_loop.py
+
+sudo nano /lib/systemd/system/telraam_ap_control_loop.service
+-------------
+[Unit]
+Description=Telraam manage connections of the wifi & access-point
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Telraam/Scripts/telraam_ap_control_loop.py
+
+[Install]
+WantedBy=multi-user.target
+-------------
+sudo chmod 644 /lib/systemd/system/telraam_ap_control_loop.service
+sudo systemctl daemon-reload
+sudo systemctl enable telraam_ap_control_loop.service
+
+# ======
+# FINISH
+# ======
+Welcome page (after connecting to the AP) is found at 192.168.254.1
