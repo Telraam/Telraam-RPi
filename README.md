@@ -1,6 +1,6 @@
 # Overview
 
-* [Introduction](https://github.com/Telraam/Telraam-RPi#introduction)
+* [Introduction](introduction)
 * [Running Telraam on the Raspberry Pi](https://github.com/Telraam/Telraam-RPi#running-telraam-on-the-raspberry-pi)
 * [Automatic updating](https://github.com/Telraam/Telraam-RPi#automatic-updating)
 * [Image processing](https://github.com/Telraam/Telraam-RPi#image-processing)
