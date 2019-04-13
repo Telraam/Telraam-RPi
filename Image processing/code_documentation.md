@@ -1,4 +1,4 @@
-# Telraam.py documentation
+# telraam_monitoring.py documentation
 
 Our goal is to detect moving objects (pedestrians, bikers, cars, and trucks) in a live video feed using python and the [OpenCV library](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_tutorials.html). We are using a [Raspberry Pi 3 Model B+](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/) or a [3A+](https://www.raspberrypi.org/products/raspberry-pi-3-model-a-plus/) (same but 512 MB memory instead of 1GB, but we are using less than 300 MB) and the [Raspberry Pi Camera Module v2](https://www.raspberrypi.org/products/camera-module-v2/), that we are planning to run in a 720p resolution at the possible highest FPS (this will actually be limited by the processing speed of the script, not the camera hardware). 
 
