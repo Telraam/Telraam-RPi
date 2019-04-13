@@ -59,7 +59,8 @@ The Telraam software on the Raspberry Pi contains a mechanism to perform automat
 * Every night at 0h00, the RPi will activate a first script [telraam_auto_updater_cron.py](./Remote%20updating/telraam_auto_updater_cron.py) through a scheduled cron-job, located in a file called [updatecron](./Remote%20updating/updatecron) in /etc/cron.d
 * This first script will then wait for a random time interval between 0h00 and 4h00, so that all updates of the RPis in the field are evenly distributed throughout the night, thus limiting the (possible) load on the server.
 * It then shuts down all the running AP and monitoring services, and contacts the server to download a second, generic update script and store it locally under ~/Telraam/Scripts/telraam_remote_updater.py
-    * If the download is successful, the first script will then execute the second script.
+    * If the download is successful, the first script will then execute the second script (e.g., [telraam_remote_updater-monitoring.py
+](./Remote%20updating/telraam_remote_updater-monitoring.py)).
     * This second update script can contain any kind of update we foresee (e.g., update the latest version of  the contour tracking script (telraam_monitoring.py).
 * The first script then removes the second update file, reactivates the AP service, and reboots the RPi.
 
