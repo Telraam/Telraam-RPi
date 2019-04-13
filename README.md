@@ -26,7 +26,7 @@ For more information (in Dutch) and the live traffic map, please visit the [Telr
 The Telraam software is initially provided as an image that can be written to an SD-card (minimum required size is 8 GiB); it can be found at the [Telraam website](https://telraam-api.net/telraam-sd-image.zip) (the compressed image is about 2 GiB in size). When the image is booted for the first time, it automatically resizes the main partition to span the entire SD card. From then on, when the Pi boots, it tries to connect to the local wifi network, and starts its image processing and data transfers to our servers. However, if no network is known or available, the Pi automatically becomes an access point. A user can then connect to the Pi using another device (smartphone, computer, tablet, ...), go to 192.168.254.1, and fill in the SSD and password of a local Wifi network.  
 
 In this repository we make the various scripts that Telraam uses available:
-* Resizing of the partition: [pishrink.sh](./Shrink SD image/pishrink.sh)
+* Resizing of the partition: [pishrink.sh](Shrink SD image/pishrink.sh)
 * The control loop that switches between access point mode and wifi mode: [telraam_ap_control_loop.py](./Access point/telraam_ap_control_loop.py)
 * The camera stream that is shown when the Pi is in access point mode: [telraam_camera_stream.py](./Access point/telraam_camera_stream.py)
 * The welcome page on the Pi when in access point mode: [index.php](./Access point/index.php)
