@@ -15,7 +15,7 @@ Pedestrians, cyclists, cars, and heavy vehicles are each counted separately when
 
 TML develops the architecture, the hardware setup and the software for the sensor, and uses the resulting traffic count data in a pilot case in [Kessel-Lo, Belgium](https://www.google.com/maps/place/Kessel-Lo,+3010+Leuven/) (Leuven, Belgium) to showcase the possibilities of the application to both citizens as well as local governments. In the pilot case in Kessel-Lo, we roll out a local network of 100 counting points. Furthermore, we provide 100 additional sensors to set up small networks in other places accross Flanders. 
 
-![Telraam pilot in Kessel-Lo, Belgium](./telraam-kessel-lo-map.png)
+![Telraam pilot in Kessel-Lo, Belgium](./Misc/telraam-kessel-lo-map.png)
 
 By the end of this project, we expect the number of sensors to grow organically beyond the original volume, and that independent applications emerge that make use of the traffic count data.
 
