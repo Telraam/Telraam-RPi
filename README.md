@@ -23,7 +23,7 @@ For more information (in Dutch) and the live traffic map, please visit the [Telr
 
 ## Telraam on the Raspberry Pi
 
-The Telraam software is initially provided as an image that can be written to an SD-card (minimum required size is 8 GiB); it can be found at the [Telraam website](https://telraam-api.net/telraam-sd-image.zip) (the compressed image is about 2 GiB in size). When the image is booted for the first time, it automatically resizes the main partition to span the entire SD card. From then on, when the Pi boots, it tries to connect to the local Wifi network, and starts its image processing and data transfers to our servers. However, if no network is known or available, the Pi automatically becomes an access point. A user can then connect to the Pi using another device (smartphone, computer, tablet, ...), go to 192.168.254.1 and fill in the SSD and password of a local Wifi network.  
+The Telraam software is initially provided as an image that can be written to an SD-card (minimum required size is 8 GiB); it can be found at the [Telraam website](https://telraam-api.net/telraam-sd-image.zip) (the compressed image is about 2 GiB in size). When the image is booted for the first time, it automatically resizes the main partition to span the entire SD card. From then on, when the Pi boots, it tries to connect to the local Wifi network, and starts its image processing and data transfers to our servers. However, if no network is known or available, the Pi automatically becomes an access point. A user can then connect to the Pi using another device (smartphone, computer, tablet, ...), go to 192.168.254.1, and fill in the SSD and password of a local Wifi network.  
 
 In this repository we make the various scripts that Telraam uses available:
 * Resizing of the partition: [pishrink.sh](./pishrink.sh)
@@ -31,7 +31,7 @@ In this repository we make the various scripts that Telraam uses available:
 * The camera stream that is shown when the Pi is in access point mode: [telraam_camera_stream.py](./telraam_camera_stream.py)
 * The monitoring script that performs the image processing and data transfers: [telraam_monitoring.py](./telraam_monitoring.py)
 * The remote updating functionality: [telraam_auto_updater_cron.py](./telraam_auto_updater_cron.py)
-* And finally some household tools: [telraam_show_mac_address.py] (./telraam_show_mac_address.py) [telraam_ap_control_loop.service] (./telraam_ap_control_loop.service) [telraam_camera_stream.service](./telraam_camera_stream.service) [telraam_monitoring.service](./telraam_monitoring.service)
+* And finally some household tools: [telraam_show_mac_address.py](./telraam_show_mac_address.py) [telraam_ap_control_loop.service] (./telraam_ap_control_loop.service) [telraam_camera_stream.service](./telraam_camera_stream.service) [telraam_monitoring.service](./telraam_monitoring.service)
 
 The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original scripts developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
 
