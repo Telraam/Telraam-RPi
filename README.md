@@ -36,6 +36,19 @@ In this repository we make the various scripts that Telraam uses available:
 
 The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original scripts developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
 
+## Automatic updating
+
+The Telraam software on the Raspberry Pi contains a mechanism to perform automatic nightly updates.
+
+* Every night at 0h00, the RPi will activate a first script [telraam_auto_updater_cron.py](./Remote%20updating/telraam_auto_updater_cron.py) through a scheduled cron-job, located in a file called [updatecron](./Remote%20updating/updatecron) in /etc/cron.d
+* This first script will then wait for a random time interval between 0h00 and 4h00, so that all updates of the RPis in the field are evenly distributed throughout the night, thus limiting the (possible) load on the server.
+* It then shuts down all the running AP and monitoring services, and contacts the server to download a second, generic update script and store it locally under ~/Telraam/Scripts/telraam_remote_updater.py
+    * If the download is successful, the first script will then execute the second script.
+    * This second update script can contain any kind of update we foresee (e.g., update the latest version of  the contour tracking script (telraam_monitoring.py).
+* The first script then removes the second update file, reactivates the AP service, and reboots the RPi.
+
+## Image processing
+
 The main image processing is done in [telraam_monitoring.py](./Image%20processing/telraam_monitoring.py). Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-RPi#dependencies) that are needed for the script to run, a link to a detailed [documentation](https://github.com/Telraam/Telraam-RPi#detailed-documentation) that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of [development goals](https://github.com/Telraam/Telraam-RPi#development-goals) that we would like the community to pay special attention to.
 
 #### Dependencies
