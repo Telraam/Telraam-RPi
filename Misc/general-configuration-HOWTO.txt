@@ -1,0 +1,217 @@
+﻿# -----------------
+# MAIN INSTALLATION
+# -----------------
+
+# ========
+# PACKAGES
+# ========
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+sudo apt-get purge wolfram-engine
+sudo apt-get purge libreoffice*
+sudo apt-get purge minecraft-pi
+sudo apt-get clean
+sudo apt-get autoremove
+sudo apt-get install elinks -y
+sudo apt-get install conky-all -y
+***-> update .conkyrc
+
+# ====================
+# INSTALL WEB SERVICES
+# ====================
+sudo apt-get install apache2 -y
+sudo apt-get install php libapache2-mod-php -y
+sudo apt-get install php-mysql mysql-server -y
+
+# ============
+# RASPI CONFIG
+# ============
+sudo raspi-config
+-> Interfacing options
+-> Enable VNC
+(UNIX-style login, with username 'pi' and password 'pi')
+-> Enable SSH (accessible via raspberrypi.local)
+-> Enable Camera
+(-> Enable Bluetooth)
+
+(-> Advanced Options)
+(-> A5 Resolution)
+(-> DMT Mode 85)
+***sudo nano /boot/config.txt
+->framebuffer_width=1600
+->framebuffer_height=900
+
+# ==============================
+# DISABLE ETH0 & CHANGE HOSTNAME
+# ==============================
+sudo nano /etc/rc.local
+-> insert sudo ifconfig eth0 down
+sudo nano /etc/hostname
+-> verander raspberrypi naar telraam
+***sudo nano /etc/hosts
+-> verander raspberrypi naar telraam
+-> reboot
+
+# ==================
+# CHANGE GPIO OUTPUT
+# ==================
+sudo nano /boot/config.txt
+
+-> add after last line:
+# lift the current limit from 0.6A to 1.2A
+max_usb_current=1
+
+# ====================
+# SSH ACCESS VIA PUTTY
+# ====================
+Hostname: telraam.local
+Password: pi
+-> Connection -> Data -> Terminal-type string: linux
+Window -> Translation -> Remote character set: UTF-8
+
+# =========================
+# APPEND .PROFILE & .BASHRC
+# =========================
+export PATH=$PATH:~/Scripts
+alias cls='clear'
+alias dir='ls -lh'
+alias adir='ls -alh'
+alias wdir='ls -h'
+alias wadir='ls -ah'
+alias del='rm'
+alias cd..='cd ..'
+alias d='sudo du -h | sort -r -h | less'
+alias el='elinks http://www.google.be/'
+alias h='htop'
+alias x='startx'
+alias t='ShowTemperature.py'
+alias c='sudo raspi-config'
+alias u='sudo apt update; sudo apt upgrade; sudo apt autoremove; sudo apt clean'
+alias ipc='hostname -I'
+
+alias tsysapstatus='sudo systemctl status telraam_ap_control_loop.service | cat'
+alias tsysapstart='sudo systemctl start telraam_ap_control_loop.service'
+alias tsysapstop='sudo systemctl stop telraam_ap_control_loop.service'
+alias tsysaprestart='sudo systemctl restart telraam_ap_control_loop.service'
+
+alias tsyscamstatus='sudo systemctl status telraam_camera_stream.service | cat'
+alias tsyscamstart='sudo systemctl start telraam_camera_stream.service'
+alias tsyscamstop='sudo systemctl stop telraam_camera_stream.service'
+alias tsyscamrestart='sudo systemctl restart telraam_camera_stream.service'
+
+alias tsysmonstatus='sudo systemctl status telraam_monitoring.service | cat'
+alias tsysmonstart='sudo systemctl start telraam_monitoring.service'
+alias tsysmonstop='sudo systemctl stop telraam_monitoring.service'
+alias tsysmonrestart='sudo systemctl restart telraam_monitoring.service'
+
+alias m='sudo mysql'
+
+# =====================
+# INSTALL SAMBA SERVICE
+# =====================
+-> setup file server (Samba)
+sudo apt-get install samba samba-common-bin -y
+mkdir ~/Shared
+sudo nano /etc/samba/smb.conf
+-> append the following text block to the end of the file
+-------
+[Shared]
+   comment = Pi shared folder
+   path = /home/pi/Shared
+   writeable = Yes
+   browseable = yes
+#   guest ok = yes
+   create mask = 0644
+   directory mask = 0755
+   force user = pi
+
+netbios name = telraam
+name resolve order = bcast lmhosts host wins
+-------
+sudo smbpasswd -a pi
+sudo /etc/init.d/samba restart
+(-> accessible via Windows explorer: \\telraam.local)
+
+# ====================
+# COPY TO SHARED DRIVE
+# ====================
+-> Manually add startup script Conky.desktop to ~/.config/autostart
+mkdir ~/Scripts
+mkdir ~/Pictures/Backgrounds
+-> copy over royalty-free TML background image
+
+# ===================================
+# INSTALL SHUTDOWN MONITORING SERVICE
+# ===================================
+-> copy scripts to RPi
+mkdir Scripts
+cd Scripts
+sudo chmod +x MonitorShutdown.py
+sudo cp MonitorShutdown.py /usr/local/bin/
+sudo chmod +x MonitorShutdown.sh
+sudo cp MonitorShutdown.sh /etc/init.d/
+sudo update-rc.d MonitorShutdown.sh defaults
+sudo /etc/init.d/MonitorShutdown.sh start
+sudo chmod +x ShowTemperature.py
+
+# ==========================
+# INSTALL UPDATE AT MIDNIGHT
+# ==========================
+pip install wget
+pip3 install wget
+sudo pip install wget
+sudo pip3 install wget
+sudo nano /etc/cron.d/updatecron
+0 0 * * * root /usr/bin/python3 /home/pi/Telraam/Scripts/telraam_auto_updater_cron.py
+
+# ==============
+# INSTALL OPENCV
+# ==============
+
+OPENCV_VERSION='3.4.3'
+sudo apt-get install build-essential cmake pkg-config -y
+sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev -y
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
+sudo apt-get install libxvidcore-dev libx264-dev -y
+sudo apt-get install libgtk2.0-dev libgtk-3-dev -y
+sudo apt-get install libatlas-base-dev gfortran -y
+sudo apt-get install python2.7-dev python3-dev -y
+sudo apt-get install php-numpy php-scipy -y
+sudo rm -rf ~/.cache/pip
+
+wget -O opencv.zip https://github.com/Itseez/opencv/archive/${OPENCV_VERSION}.zip
+unzip opencv.zip
+rm opencv.zip
+wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/${OPENCV_VERSION}.zip
+unzip opencv_contrib.zip
+rm opencv_contrib.zip
+
+cd ~/opencv-${OPENCV_VERSION}/
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-${OPENCV_VERSION}/modules -D BUILD_EXAMPLES=ON ..
+
+sudo nano /etc/dphys-swapfile
+-> CONF_SWAPSIZE=1024
+sudo /etc/init.d/dphys-swapfile stop
+sudo /etc/init.d/dphys-swapfile start
+
+make -j4
+sudo make install
+sudo ldconfig
+cd /usr/local/lib/python3.5/dist-packages/
+sudo mv cv2.cpython-35m-arm-linux-gnueabihf.so cv2.so
+rm -rf opencv-${OPENCV_VERSION} opencv_contrib-${OPENCV_VERSION}
+
+python
+>>> import cv2
+>>> cv2.__version__
+?->'3.4.3'
+exit()
+
+-> exit & login again
+sudo nano /etc/dphys-swapfile
+-> CONF_SWAPSIZE=100
+sudo /etc/init.d/dphys-swapfile stop
+sudo /etc/init.d/dphys-swapfile start
