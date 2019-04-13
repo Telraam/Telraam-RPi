@@ -19,7 +19,7 @@ In the pilot case in Kessel-Lo, we roll out a local network of 100 counting poin
 
 By the end of this project, we expect the number of sensors to grow organically beyond the original volume, and that independent applications emerge that make use of the traffic count data.
 
-For more information (in Dutch) and the live traffic map, please visit the [Terlaam website](https://telraam.net/).
+For more information (in Dutch) and the live traffic map, please visit the [Telraam website](https://telraam.net/).
 
 ## Telraam on the Raspberry Pi
 
