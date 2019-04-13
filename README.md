@@ -47,7 +47,7 @@ The main image processing is done in [telraam_monitoring.py](./Image%20processin
 
 #### Detailed documentation
 
-There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in **[code_documentation.md](./code_documentation.md)**
+There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in **[code_documentation.md](./Image%20processing/code_documentation.md)**
 
 #### Development goals
 
