@@ -1,0 +1,1 @@
+0 0 * * * root /usr/bin/python3 /home/pi/Telraam/Scripts/telraam_auto_updater_cron.py
