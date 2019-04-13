@@ -29,6 +29,7 @@ In this repository we make the various scripts that Telraam uses available:
 * Resizing of the partition: [pishrink.sh](./pishrink.sh)
 * The control loop that switches between access point mode and wifi mode: [telraam_ap_control_loop.py](./telraam_ap_control_loop.py)
 * The camera stream that is shown when the Pi is in access point mode: [telraam_camera_stream.py](./telraam_camera_stream.py)
+* The welcome page on the Pi when in access point mode: [index.php](./index.php)
 * The monitoring script that performs the image processing and data transfers: [telraam_monitoring.py](./telraam_monitoring.py)
 * The remote updating functionality: [telraam_auto_updater_cron.py](./telraam_auto_updater_cron.py)
 * And finally some household tools: [telraam_show_mac_address.py](./telraam_show_mac_address.py) [telraam_ap_control_loop.service](./telraam_ap_control_loop.service) [telraam_camera_stream.service](./telraam_camera_stream.service) [telraam_monitoring.service](./telraam_monitoring.service)
