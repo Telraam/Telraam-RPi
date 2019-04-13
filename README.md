@@ -32,7 +32,7 @@ In this repository we make the various scripts that Telraam uses available:
 * The welcome page on the Pi when in access point mode: [index.php](./Access%20point/index.php)
 * The monitoring script that performs the image processing and data transfers: [telraam_monitoring.py](./Image%20processing/telraam_monitoring.py)
 * The remote updating functionality: [telraam_auto_updater_cron.py](./Remote%20updating/telraam_auto_updater_cron.py)
-* And finally some household tools: [telraam_show_mac_address.py](./Misc/telraam_show_mac_address.py)
+* And finally some household tools: [Misc](./Misc/)
 
 The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original scripts developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
 
