@@ -1,4 +1,11 @@
-# Telraam
+# Overview
+
+* [Introduction](Running Telraam on the Raspberry Pi)
+* [Running Telraam on the Raspberry Pi](Running Telraam on the Raspberry Pi)
+* [Automatic updating](Automatic updating)
+* [Image processing](Image processing)
+
+## Introduction
 
 **Telraam is an affordable and yet intricate traffic-monitoring network built around a cluster of low-cost sensors and a central server. It is a collaboration between [Transport & Mobility Leuven (TML)](https://www.tmleuven.be/en/), [Mobiel 21](https://www.mobiel21.be/), and [Waanz.in](https://waanz.in/), that is financed by the Smart Mobility Belgium Grant of the Federal Government.**
 
@@ -10,7 +17,6 @@ Precisely measured traffic volumes are essential for transport-related studies. 
 
 :house::deciduous_tree::office::hotel:
 
-
 Pedestrians, cyclists, cars, and heavy vehicles are each counted separately when passing in front of the low-resolution camera (without actual images being stored). The resulting traffic data can be used to perform traffic engeneering studies. This way, citizens and citizen platforms get objective data, allowing them to engage in a dialogue based on actual data with their local government. This could result in actions such as for instance a modification of the driving direction, the redesign of the public space, an improvent of the cycling conditions, or a modification of the parking infrastructure.
 
 TML develops the architecture, the hardware setup and the software for the sensor, and uses the resulting traffic count data in a pilot case in [Kessel-Lo, Belgium](https://www.google.com/maps/place/Kessel-Lo,+3010+Leuven/) (Leuven, Belgium) to showcase the possibilities of the application to both citizens as well as local governments. In the pilot case in Kessel-Lo, we roll out a local network of 100 counting points. Furthermore, we provide 100 additional sensors to set up small networks in other places accross Flanders. 
@@ -21,7 +27,7 @@ By the end of this project, we expect the number of sensors to grow organically 
 
 For more information (in Dutch) and the live traffic map, please visit the [Telraam website](https://telraam.net/).
 
-## Telraam on the Raspberry Pi
+## Running Telraam on the Raspberry Pi
 
 The Telraam software is initially provided as an image that can be written to an SD-card (minimum required size is 8 GiB); it can be found at the [Telraam website](https://telraam-api.net/telraam-sd-image.zip) (the compressed image is about 2 GiB in size). When the image is booted for the first time, it automatically resizes the main partition to span the entire SD card. From then on, when the Pi boots, it tries to connect to the local wifi network, and starts its image processing and data transfers to our servers. However, if no network is known or available, the Pi automatically becomes an access point. A user can then connect to the Pi using another device (smartphone, computer, tablet, ...), go to 192.168.254.1, and fill in the SSD and password of a local Wifi network.  
 
