@@ -27,16 +27,16 @@ The Telraam software is initially provided as an image that can be written to an
 
 In this repository we make the various scripts that Telraam uses available:
 * Resizing of the partition: [pishrink.sh](./Shrink%20SD%20image/pishrink.sh)
-* The control loop that switches between access point mode and wifi mode: [telraam_ap_control_loop.py](./Access point/telraam_ap_control_loop.py)
-* The camera stream that is shown when the Pi is in access point mode: [telraam_camera_stream.py](./Access point/telraam_camera_stream.py)
-* The welcome page on the Pi when in access point mode: [index.php](./Access point/index.php)
-* The monitoring script that performs the image processing and data transfers: [telraam_monitoring.py](./Image processing/telraam_monitoring.py)
-* The remote updating functionality: [telraam_auto_updater_cron.py](./Remote updating/telraam_auto_updater_cron.py)
+* The control loop that switches between access point mode and wifi mode: [telraam_ap_control_loop.py](./Access%20point/telraam_ap_control_loop.py)
+* The camera stream that is shown when the Pi is in access point mode: [telraam_camera_stream.py](./Access%20point/telraam_camera_stream.py)
+* The welcome page on the Pi when in access point mode: [index.php](./Access%20point/index.php)
+* The monitoring script that performs the image processing and data transfers: [telraam_monitoring.py](./Image%20processing/telraam_monitoring.py)
+* The remote updating functionality: [telraam_auto_updater_cron.py](./Remote%20updating/telraam_auto_updater_cron.py)
 * And finally some household tools: [telraam_show_mac_address.py](./Misc/telraam_show_mac_address.py)
 
 The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original scripts developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
 
-The main image processing is done in [telraam_monitoring.py](./Image processing/telraam_monitoring.py). Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-RPi#dependencies) that are needed for the script to run, a link to a detailed [documentation](https://github.com/Telraam/Telraam-RPi#detailed-documentation) that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of [development goals](https://github.com/Telraam/Telraam-RPi#development-goals) that we would like the community to pay special attention to.
+The main image processing is done in [telraam_monitoring.py](./Image%20processing/telraam_monitoring.py). Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-RPi#dependencies) that are needed for the script to run, a link to a detailed [documentation](https://github.com/Telraam/Telraam-RPi#detailed-documentation) that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of [development goals](https://github.com/Telraam/Telraam-RPi#development-goals) that we would like the community to pay special attention to.
 
 #### Dependencies
 
