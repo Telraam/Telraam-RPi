@@ -48,7 +48,7 @@ The main image processing is done in [telraam_monitoring.py](./telraam_monitorin
 
 There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in **[code_documentation.md](./code_documentation.md)**
 
-#### Developement goals
+#### Development goals
 
 - [ ] Advanced (Bayesian) tracking (that is capable of better handling special cases, such as object overlaps, merging and separating objects, etc.).
 - [ ] Compression of the (binary) data when transferring to the server.
