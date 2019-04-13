@@ -23,9 +23,19 @@ For more information (in Dutch) and the live traffic map, please visit the [Telr
 
 ## Telraam on the Raspberry Pi
 
-In this repository we make the script, [Telraam.py](./Telraam.py), that runs on the Rapsberry Pi computers at each Telraam user available to the public. The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original script developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
+The Telraam software is initially provided as an image that can be written to an SD-card (minimum required size is 8 GiB); it can be found at the [Telraam website](https://telraam-api.net/telraam-sd-image.zip). When the image is booted for the first time, it automatically resizes the main partition to span the entire SD card. From then on, when the Pi boots, it tries to connect to the local Wifi network, and starts its image processing and data transfers to our servers. However, if no network is known or available, the Pi automatically becomes an access point. A user can then connect to the Pi using another device (smartphone, computer, tablet, ...), go to 192.168.254.1 and fill in the SSD and password of a local Wifi network.  
 
-Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-RPi#dependencies) that are needed for the script to run, a link to a detailed [documentation](https://github.com/Telraam/Telraam-RPi#detailed-documentation) that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of [developement goals](https://github.com/Telraam/Telraam-RPi#developement-goals) that we would like the community to pay special attention to.
+In this repository we make the various scripts that Telraam uses available:
+* Resizing of the partition: [pishrink.sh](./pishrink.sh)
+* The control loop that switches between access point mode and Wifi mode: [telraam_ap_control_loop.py](./telraam_ap_control_loop.py)
+* The camera stream that is shown when the Pi is in access point mode: [telraam_camera_stream.py](./telraam_camera_stream.py)
+* The monitoring script that performs the image processing and data transfers: [telraam_monitoring.py](./telraam_monitoring.py)
+* The remote updating functionality: [telraam_auto_updater_cron.py](./telraam_auto_updater_cron.py)
+* And finally some household tools: [telraam_show_mac_address.py] (./telraam_show_mac_address.py) [telraam_ap_control_loop.service] (./telraam_ap_control_loop.service) [telraam_camera_stream.service](./telraam_camera_stream.service) [telraam_monitoring.service](./telraam_monitoring.service)
+
+The goal of this - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original scripts developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
+
+The main image processing is done in [telraam_monitoring.py](./telraam_monitoring.py). Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-RPi#dependencies) that are needed for the script to run, a link to a detailed [documentation](https://github.com/Telraam/Telraam-RPi#detailed-documentation) that explains some ideas behind the script in a more detailed way than how it is done by comments placed inside the script itself, and a list of [development goals](https://github.com/Telraam/Telraam-RPi#development-goals) that we would like the community to pay special attention to.
 
 #### Dependencies
 
@@ -36,12 +46,12 @@ Below you will find a list of [dependencies](https://github.com/Telraam/Telraam-
 
 #### Detailed documentation
 
-There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in **[code_documantation.md](./code_documantation.md)**
+There is extensive documentation in the form of end-of-the-line comments in the code, and there is a detailed documentation that explains some of the practices and ideas behind the code that is available in **[code_documentation.md](./code_documentation.md)**
 
 #### Developement goals
 
-- [ ] Advanced (Bayesian) tracking (that is capable of handling special cases, such as object overlaps, merging and separating objects, etc. better).
-- [ ] Compressed (binary) data transfer to the server.
-- [ ] Properly parallelise observing and tracking loops (assuming the Bayesian tracking can be made real-time speed, during active observing the contour data from the previous obsereving window could be tracked and transferred, saving valuable uptime).
-- [ ] Better background calculation logic that can handle situations with traffic standstills better.
+- [ ] Advanced (Bayesian) tracking (that is capable of better handling special cases, such as object overlaps, merging and separating objects, etc.).
+- [ ] Compression of the (binary) data when transferring to the server.
+- [ ] Properly parallelise observing and tracking loops (assuming the Bayesian tracking can be made real-time; during actively observing the contour data from the previous observing window could be tracked and transferred, saving valuable uptime).
+- [ ] Better background calculation logic that can better handle situations with traffic standstills.
 - [ ] Go wild, anything that can improve the speed and quality of image processing, object matching and tracking, and data transfer.
