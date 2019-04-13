@@ -1,0 +1,10 @@
+[Unit]
+Description=Telraam manage-access point & connections to wifi
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Telraam/Scripts/telraam_ap_control_loop.py
+
+[Install]
+WantedBy=multi-user.target

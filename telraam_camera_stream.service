@@ -1,0 +1,10 @@
+[Unit]
+Description=Telraam camera stream service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Telraam/Scripts/telraam_camera_stream.py
+
+[Install]
+WantedBy=multi-user.target
