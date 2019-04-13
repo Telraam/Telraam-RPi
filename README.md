@@ -1,6 +1,6 @@
 # Overview
 
-* [Introduction](introduction)
+* [Introduction](https://github.com/Telraam/Telraam-RPi#introduction)
 * [Running Telraam on the Raspberry Pi](https://github.com/Telraam/Telraam-RPi#running-telraam-on-the-raspberry-pi)
 * [Automatic updating](https://github.com/Telraam/Telraam-RPi#automatic-updating)
 * [Image processing](https://github.com/Telraam/Telraam-RPi#image-processing)
@@ -33,15 +33,15 @@ Telraam consists of software on the front-ends (i.e. the Raspberry Pis) and the 
 
 The goal of making all scripts available - besides being completely transparent and honest about our methods - is to provide an opportunity to the public to improve upon (parts) of the original scripts developed at Transport & Mobility Leuven (TML, Belgium), and help the Telraam network reach its maximum potential. Please make sure to observe our CC BY-SA license.
 
-### Telraam amaking all scripts available SD card image
+### Telraam as an SD card image
 
 The Telraam software is initially provided is an image that can be written to an SD-card (minimum required size is 8 GiB); it can be found at the [Telraam website](https://telraam-api.net/telraam-sd-image.zip) (the compressed image is about 2 GiB in size).
 
 When the image is booted for the first time, it automatically resizes the main partition to span the entire SD card. From then on, when the Pi boots, it tries to connect to the local wifi network, and starts its image processing and data transfers to our servers. However, if no network is known or available, the Pi automatically becomes an access point. A user can then connect to the Pi using another device (smartphone, computer, tablet, ...), go to 192.168.254.1, and fill in the SSD and password of a local Wifi network.  
 
-### Telraam's nuts and bolts
+### Telraam's internal nuts and bolts
 
-Some specific steps need to be taken in order to setup the Telraam software from scratch. 
+Some specific steps need to be taken in order to setup the Telraam software from scratch. For an overview, please refer to [general-configuration-HOWTO.txt](Misc/general-configuration-HOWTO.txt). For configuration details of the access point mode setup, please refer to [setup-access-point-HOWTO.txt](Access%20point/setup-access-point-HOWTO.txt). 
 
 In this repository we make the various scripts that Telraam uses available:
 * Resizing of the partition: [pishrink.sh](./Shrink%20SD%20image/pishrink.sh)
