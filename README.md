@@ -52,6 +52,8 @@ In this repository we make the various scripts that Telraam uses available:
 * The remote updating functionality: [telraam_auto_updater_cron.py](./Remote%20updating/telraam_auto_updater_cron.py)
 * And finally some household tools: [Misc](./Misc/)
 
+These scripts are actually ran as three separate services that can be started and stopped, depending on the prevailing conditions. The main service that runs the [telraam_ap_control_loop.py](./Access%20point/telraam_ap_control_loop.py) is always active, and just periodically monitors the wifi connection and decides when remain connected to a local wifi or when to serve as an access point. When the Pi is not connected to a wifi network, it starts the [telraam_camera_stream.py](./Access%20point/telraam_camera_stream.py) service. Once a connection to a wifi network is made, that service is stopped and the [telraam_monitoring.py](./Image%20processing/telraam_monitoring.py) service is started.
+
 ## Automatic updating
 
 The Telraam software on the Raspberry Pi contains a mechanism to perform automatic nightly updates.
