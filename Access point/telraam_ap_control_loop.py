@@ -11,11 +11,14 @@ DNS_PORT = 53
 DNS_TIME_OUT = 3
 
 # sleep timeintervals
-#CONTROL_LOOP_INTERVAL = 45
+#CONTROL_LOOP_INTERVAL = 20
+#CONTROL_LOOP_INTERVAL = 2 * 60
 CONTROL_LOOP_INTERVAL = 10 * 60
 START_UP_SLEEP_TIME = 15
 SERVICE_WAIT_TIME = 3
 
+# wpa_supplicant.conf header
+WPA_SUPPLICANT_HEADER = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n"
 
 def is_camera_stream_service_running():
     p = subprocess.Popen(["sudo", "systemctl", "status", "telraam_camera_stream"], stdout=subprocess.PIPE)
@@ -90,7 +93,7 @@ def setup_access_point():
     file = open("/etc/dhcpcd.conf", "a")
     file.write("interface wlan0\n")
     file.write("  static ip_address=192.168.254.1/24\n")
-    file.write("  nohook wpa_supplicant")
+    file.write("  nohook wpa_supplicant\n")
     file.close()
     p = subprocess.Popen(["sudo", "service", "dhcpcd", "restart"])
     p.communicate()
@@ -193,7 +196,7 @@ while True:
                 p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
                 p.communicate()
                 file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-                file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
+                file.write(WPA_SUPPLICANT_HEADER)
                 file.close()
 
                 setup_access_point()
@@ -205,11 +208,12 @@ while True:
             print("... The SSID was found, creating WPA supplicant, stopping hostapd service, starting dhcpcd service...")
             # SSID is new, so replace the conf file
             file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-            file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
+            file.write(WPA_SUPPLICANT_HEADER)
             file.write("\nnetwork={\n")
             file.write("\tssid=\"" + wifi_ssid + "\"\n")
             file.write("\tpsk=\"" + wifi_pwd + "\"\n")
-            file.write("}")
+            file.write("\tscan_ssid=1\n")
+            file.write("}\n")
             file.close()
 
             # stop the AP
@@ -267,7 +271,7 @@ while True:
                 p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
                 p.communicate()
                 file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-                file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
+                file.write(WPA_SUPPLICANT_HEADER)
                 file.close()
 
                 setup_access_point()
