@@ -1,21 +1,31 @@
-﻿# -----------------
+# -----------------
 # MAIN INSTALLATION
 # -----------------
+
+Target OS: Raspbian GNU/Linux 9 (stretch)
 
 # ========
 # PACKAGES
 # ========
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get dist-upgrade
-sudo apt-get purge wolfram-engine
-sudo apt-get purge libreoffice*
-sudo apt-get purge minecraft-pi
-sudo apt-get clean
-sudo apt-get autoremove
-sudo apt-get install elinks -y
+sudo apt-get update -y
+sudo apt-get upgrade -y
+(SKIP due to incompatibilities when compiling OpenCV: sudo apt-get dist-upgrade -y)
+sudo apt-get purge wolfram-engine -y
+sudo apt-get purge libreoffice* -y
+sudo apt-get purge minecraft-pi -y
+sudo apt-get remove chromium-browser -y
+sudo apt-get remove epiphany-browser -y
+sudo apt-get install midori -y
 sudo apt-get install conky-all -y
-***-> update .conkyrc
+sudo apt-get install exfat-fuse exfat-utils -y
+sudo apt-get autoremove -y
+sudo apt-get clean -y
+*** Create.conkyrc
+*** Manually add startup script Conky.desktop to ~/.config/autostart
+rm -rf ~/MagPi
+rm -rf ~/Music
+rm -rf ~/Templates
+rm -rf ~/Videos
 
 # ====================
 # INSTALL WEB SERVICES
@@ -28,47 +38,32 @@ sudo apt-get install php-mysql mysql-server -y
 # RASPI CONFIG
 # ============
 sudo raspi-config
--> Interfacing options
--> Enable VNC
+*** Boot options -> B3 Splash Screen -> Disable
+*** Interfacing options
+*** Enable Camera
+*** Enable SSH (accessible via raspberrypi.local)
 (UNIX-style login, with username 'pi' and password 'pi')
--> Enable SSH (accessible via raspberrypi.local)
--> Enable Camera
-(-> Enable Bluetooth)
-
-(-> Advanced Options)
-(-> A5 Resolution)
-(-> DMT Mode 85)
-***sudo nano /boot/config.txt
-->framebuffer_width=1600
-->framebuffer_height=900
+*** Enable VNC
+*** Disable Bluetooth
 
 # ==============================
 # DISABLE ETH0 & CHANGE HOSTNAME
 # ==============================
 sudo nano /etc/rc.local
--> insert sudo ifconfig eth0 down
+*** sudo ifconfig eth0 down
 sudo nano /etc/hostname
--> verander raspberrypi naar telraam
-***sudo nano /etc/hosts
--> verander raspberrypi naar telraam
--> reboot
-
-# ==================
-# CHANGE GPIO OUTPUT
-# ==================
-sudo nano /boot/config.txt
-
--> add after last line:
-# lift the current limit from 0.6A to 1.2A
-max_usb_current=1
+*** change raspberrypi: telraam
+sudo nano /etc/hosts
+*** change raspberrypi: telraam
 
 # ====================
-# SSH ACCESS VIA PUTTY
+# COPY TO SHARED DRIVE
 # ====================
-Hostname: telraam.local
-Password: pi
--> Connection -> Data -> Terminal-type string: linux
-Window -> Translation -> Remote character set: UTF-8
+mkdir ~/Telraam
+mkdir ~/Scripts
+*** Copy over all Python scripts
+*** Copy over royalty-free TML background image to ~/Pictures
+chmod +x ~/Telraam/Scripts/*
 
 # =========================
 # APPEND .PROFILE & .BASHRC
@@ -85,36 +80,50 @@ alias d='sudo du -h | sort -r -h | less'
 alias el='elinks http://www.google.be/'
 alias h='htop'
 alias x='startx'
-alias t='ShowTemperature.py'
+alias b='epiphany-browser > /dev/null 2> /dev/null'
 alias c='sudo raspi-config'
-alias u='sudo apt update; sudo apt upgrade; sudo apt autoremove; sudo apt clean'
+alias u='sudo apt-get update; sudo apt-get upgrade; sudo apt-get autoremove; sudo apt-get clean'
 alias ipc='hostname -I'
+alias mac='python3 ~/Telraam/Scripts/telraam_show_mac_address.py'
+alias ap='nano ~/Telraam/Scripts/telraam_ap_control_loop.py'
+alias wpa='sudo nano /etc/wpa_supplicant/wpa_supplicant.conf'
+alias clearbash='cat /dev/null > ~/.bash_history && history -c && exit'
 
 alias tsysapstatus='sudo systemctl status telraam_ap_control_loop.service | cat'
 alias tsysapstart='sudo systemctl start telraam_ap_control_loop.service'
 alias tsysapstop='sudo systemctl stop telraam_ap_control_loop.service'
 alias tsysaprestart='sudo systemctl restart telraam_ap_control_loop.service'
+alias tsysapenable='sudo systemctl enable telraam_ap_control_loop.service'
+alias tsysapdisable='sudo systemctl disable telraam_ap_control_loop.service'
 
 alias tsyscamstatus='sudo systemctl status telraam_camera_stream.service | cat'
 alias tsyscamstart='sudo systemctl start telraam_camera_stream.service'
 alias tsyscamstop='sudo systemctl stop telraam_camera_stream.service'
 alias tsyscamrestart='sudo systemctl restart telraam_camera_stream.service'
+alias tsyscamenable='sudo systemctl enable telraam_camera_stream.service'
+alias tsyscamdisable='sudo systemctl disable telraam_camera_stream.service'
 
 alias tsysmonstatus='sudo systemctl status telraam_monitoring.service | cat'
 alias tsysmonstart='sudo systemctl start telraam_monitoring.service'
 alias tsysmonstop='sudo systemctl stop telraam_monitoring.service'
 alias tsysmonrestart='sudo systemctl restart telraam_monitoring.service'
+alias tsysmonenable='sudo systemctl enable telraam_monitoring.service'
+alias tsysmondisable='sudo systemctl disable telraam_monitoring.service'
+alias tsysmon='sudo python3 ~/Telraam/Scripts/telraam_monitoring.py --idandtrack --verbose --display; sudo rm -rf test'
+
+alias tsys='cls; tsyscamstatus; tsysapstatus; tsysmonstatus'
 
 alias m='sudo mysql'
+
+sudo reboot
 
 # =====================
 # INSTALL SAMBA SERVICE
 # =====================
--> setup file server (Samba)
 sudo apt-get install samba samba-common-bin -y
 mkdir ~/Shared
 sudo nano /etc/samba/smb.conf
--> append the following text block to the end of the file
+*** Append the following text block to the end of the file
 -------
 [Shared]
    comment = Pi shared folder
@@ -130,30 +139,213 @@ netbios name = telraam
 name resolve order = bcast lmhosts host wins
 -------
 sudo smbpasswd -a pi
+*** pi
+*** pi
 sudo /etc/init.d/samba restart
 (-> accessible via Windows explorer: \\telraam.local)
 
-# ====================
-# COPY TO SHARED DRIVE
-# ====================
--> Manually add startup script Conky.desktop to ~/.config/autostart
-mkdir ~/Scripts
-mkdir ~/Pictures/Backgrounds
--> copy over royalty-free TML background image
+# ==============
+# INSTALL OPENCV
+# ==============
+OPENCV_VERSION='3.4.3'
+sudo apt-get install build-essential cmake pkg-config -y
+sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev -y
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
+sudo apt-get install libxvidcore-dev libx264-dev -y
+sudo apt-get install libgtk2.0-dev libgtk-3-dev -y
+sudo apt-get install libatlas-base-dev gfortran -y
+sudo apt-get install python2.7-dev python3-dev -y
+sudo apt-get install python-numpy python-scipy -y
 
-# ===================================
-# INSTALL SHUTDOWN MONITORING SERVICE
-# ===================================
--> copy scripts to RPi
-mkdir Scripts
-cd Scripts
-sudo chmod +x MonitorShutdown.py
-sudo cp MonitorShutdown.py /usr/local/bin/
-sudo chmod +x MonitorShutdown.sh
-sudo cp MonitorShutdown.sh /etc/init.d/
-sudo update-rc.d MonitorShutdown.sh defaults
-sudo /etc/init.d/MonitorShutdown.sh start
-sudo chmod +x ShowTemperature.py
+sudo rm -rf ~/.cache/pip
+
+wget -O opencv.zip https://github.com/Itseez/opencv/archive/${OPENCV_VERSION}.zip
+wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/${OPENCV_VERSION}.zip
+unzip opencv.zip; unzip opencv_contrib.zip
+rm opencv.zip; rm opencv_contrib.zip
+
+cd ~/opencv-${OPENCV_VERSION}/
+mkdir build
+cd build
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-${OPENCV_VERSION}/modules -D BUILD_EXAMPLES=ON ..
+
+sudo nano /etc/dphys-swapfile
+*** CONF_SWAPSIZE=1024
+sudo /etc/init.d/dphys-swapfile stop
+sudo /etc/init.d/dphys-swapfile start
+
+make -j4
+sudo make install
+sudo ldconfig
+cd /usr/local/lib/python3.5/dist-packages/
+sudo mv cv2.cpython-35m-arm-linux-gnueabihf.so cv2.so
+cd
+rm -rf opencv-${OPENCV_VERSION} opencv_contrib-${OPENCV_VERSION}
+
+python
+>>> import cv2
+>>> cv2.__version__
+?->'3.4.3'
+exit()
+
+sudo nano /etc/dphys-swapfile
+*** CONF_SWAPSIZE=100
+sudo /etc/init.d/dphys-swapfile stop
+sudo /etc/init.d/dphys-swapfile start
+
+u
+
+# ===================
+# SETUP CAMERA STREAM
+# ===================
+(based on https://picamera.readthedocs.io/en/latest/recipes2.html#web-streaming)
+sudo chmod +x /home/pi/Telraam/Scripts/telraam_camera_stream.py
+
+sudo cp telraam_camera_stream.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/telraam_camera_stream.service
+sudo systemctl daemon-reload
+sudo systemctl enable telraam_camera_stream.service
+
+# =========================================
+# URL FOR LOCALLY TESTING THE CAMERA STREAM
+# =========================================
+http://127.0.0.1:8000/stream.mjpg
+
+# ====================
+# SETUP MYSQL DATABASE
+# ====================
+sudo apt-get install python-mysqldb -y
+sudo apt-get install python3-mysqldb -y
+
+sudo mysql
+CREATE DATABASE telraam;
+USE telraam;
+CREATE TABLE connection(wifi_ssid VARCHAR(32),wifi_pwd VARCHAR(64));
+GRANT ALL PRIVILEGES ON * . * TO 'pi'@'localhost' IDENTIFIED BY 'pi';
+exit
+
+# =======================
+# SETUP MONITORING SCRIPT
+# =======================
+pip3 install pandas
+sudo pip3 install pandas
+sudo chmod +x /home/pi/Telraam/Scripts/telraam_monitoring.py
+
+sudo cp telraam_monitoring.service /lib/systemd/system/
+sudo chmod 644 /lib/systemd/system/telraam_monitoring.service
+sudo systemctl daemon-reload
+sudo systemctl enable telraam_monitoring.service
+
+# ==================
+# SETUP ACCESS POINT
+# ==================
+sudo apt-get install dnsmasq hostapd -y
+sudo systemctl stop dnsmasq
+sudo systemctl stop hostapd
+
+sudo nano /etc/dhcpcd.conf
+*** append with the following
+# TELRAAM
+interface wlan0
+	static ip_address=192.168.254.1/24
+	nohook wpa_supplicant
+
+sudo service dhcpcd restart
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+sudo nano /etc/dnsmasq.conf
+*** append with the following
+interface=wlan0
+	dhcp-range=192.168.254.2,192.168.254.254,255.255.255.0,24h
+
+sudo nano /etc/hostapd/hostapd.conf
+*** append with the following
+interface=wlan0
+driver=nl80211
+ssid=TELRAAM
+hw_mode=g
+channel=7
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=TelraamTelraam
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+
+sudo nano /etc/default/hostapd
+*** replace #DAEMON_CONF with DAEMON_CONF="/etc/hostapd/hostapd.conf"
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+sudo systemctl start hostapd
+sudo systemctl start dnsmasq
+sudo nano /etc/sysctl.conf
+*** uncomment net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
+sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+sudo nano /etc/rc.local
+*** add before "exit 0"
+#sudo ifconfig eth0 down
+sudo iptables-restore < /etc/iptables.ipv4.nat
+
+sudo reboot
+
+sudo chmod +x /home/pi/Telraam/Scripts/telraam_ap_control_loop.py
+sudo nano /lib/systemd/system/telraam_ap_control_loop.service
+[Unit]
+Description=Telraam manage-access point & connections to wifi
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Telraam/Scripts/telraam_ap_control_loop.py
+
+[Install]
+WantedBy=multi-user.target
+
+sudo chmod 644 /lib/systemd/system/telraam_ap_control_loop.service
+sudo systemctl daemon-reload
+sudo systemctl enable telraam_ap_control_loop.service
+
+# ============
+# DISABLE IPV6
+# ============
+sudo nano /boot/cmdline.txt
+*** ipv6.disable=1
+
+sudo nano /etc/sysctl.conf
+*** net.ipv6.conf.all.disable_ipv6=1
+
+sudo sysctl -p
+
+# ===================
+# SETUP LOGIN WEBPAGE
+# ===================
+sudo rm -rf /var/www/html/index.html
+sudo cp index.php /var/www/html/
+sudo chmod 755 /var/www/html/index.php
+
+# ======
+# FINISH
+# ======
+Welcome page (after connecting to the AP) is found at 192.168.254.1
+
+# =========================
+# START HEADLESS BY DEFAULT
+# =========================
+sudo raspi-config
+*** 3 Boot Options
+*** B1 Desktop / CLI
+*** B1 Console
+
+# ===========
+# DISABLE VNC
+# ===========
+sudo raspi-config
+*** Interfacing options
+*** Disable VNC
 
 # ==========================
 # INSTALL UPDATE AT MIDNIGHT
@@ -165,53 +357,33 @@ sudo pip3 install wget
 sudo nano /etc/cron.d/updatecron
 0 0 * * * root /usr/bin/python3 /home/pi/Telraam/Scripts/telraam_auto_updater_cron.py
 
-# ==============
-# INSTALL OPENCV
-# ==============
+# ===============
+# CLEAR HISTORIES
+# ===============
+sudo mysql
+use telraam;
+truncate connection;
+exit
+sudo rm -f /root/.mysql_history
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+*** Delete network information
+cat /dev/null > ~/.bash_history && history -c && sudo halt
 
-OPENCV_VERSION='3.4.3'
-sudo apt-get install build-essential cmake pkg-config -y
-sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev -y
-sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev -y
-sudo apt-get install libxvidcore-dev libx264-dev -y
-sudo apt-get install libgtk2.0-dev libgtk-3-dev -y
-sudo apt-get install libatlas-base-dev gfortran -y
-sudo apt-get install python2.7-dev python3-dev -y
-sudo apt-get install php-numpy php-scipy -y
-sudo rm -rf ~/.cache/pip
+# ============
+# SHRINK IMAGE
+# ============
+*** Externally create full image of SD card
+*** Copy image to external USB drive (formatted as exFAT)
+*** Create empty (second) external USB drive (formatted as exFAT)
+*** Mount both drives on the RPi
+chmod +x pishrink.sh
+sudo mv pishrink.sh /usr/local/bin
+sudo pishrink.sh /media/pi/DRIVE/largeimage.img /media/pi/DRIVE/smallimage.img
 
-wget -O opencv.zip https://github.com/Itseez/opencv/archive/${OPENCV_VERSION}.zip
-unzip opencv.zip
-rm opencv.zip
-wget -O opencv_contrib.zip https://github.com/Itseez/opencv_contrib/archive/${OPENCV_VERSION}.zip
-unzip opencv_contrib.zip
-rm opencv_contrib.zip
-
-cd ~/opencv-${OPENCV_VERSION}/
-mkdir build
-cd build
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -D INSTALL_PYTHON_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-${OPENCV_VERSION}/modules -D BUILD_EXAMPLES=ON ..
-
-sudo nano /etc/dphys-swapfile
--> CONF_SWAPSIZE=1024
-sudo /etc/init.d/dphys-swapfile stop
-sudo /etc/init.d/dphys-swapfile start
-
-make -j4
-sudo make install
-sudo ldconfig
-cd /usr/local/lib/python3.5/dist-packages/
-sudo mv cv2.cpython-35m-arm-linux-gnueabihf.so cv2.so
-rm -rf opencv-${OPENCV_VERSION} opencv_contrib-${OPENCV_VERSION}
-
-python
->>> import cv2
->>> cv2.__version__
-?->'3.4.3'
-exit()
-
--> exit & login again
-sudo nano /etc/dphys-swapfile
--> CONF_SWAPSIZE=100
-sudo /etc/init.d/dphys-swapfile stop
-sudo /etc/init.d/dphys-swapfile start
+# ==============================
+# SSH ACCESS TO THE PI VIA PUTTY
+# ==============================
+Hostname: telraam.local
+Password: pi
+-> Connection -> Data -> Terminal-type string: linux
+Window -> Translation -> Remote character set: UTF-8
