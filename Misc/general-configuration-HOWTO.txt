@@ -313,6 +313,7 @@ sudo systemctl enable telraam_ap_control_loop.service
 # DISABLE IPV6
 # ============
 sudo nano /boot/cmdline.txt
+*** Add to the end of the single line
 *** ipv6.disable=1
 
 sudo nano /etc/sysctl.conf
