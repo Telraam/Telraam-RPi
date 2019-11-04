@@ -41,7 +41,7 @@ When the image is booted for the first time, it automatically resizes the main p
 
 ### Telraam's internal nuts and bolts
 
-Some specific steps need to be taken in order to setup the Telraam software from scratch. For an overview, please refer to [general-configuration-HOWTO.txt](Misc/general-configuration-HOWTO.txt). For configuration details of the access point mode setup, please refer to [setup-access-point-HOWTO.txt](Access%20point/setup-access-point-HOWTO.txt). 
+Some specific steps need to be taken in order to setup the Telraam software from scratch. For an overview, please refer to [general-configuration-HOWTO.txt](Misc/general-configuration-HOWTO.txt). 
 
 In this repository we make the various scripts that Telraam uses available:
 * Resizing of the partition: [pishrink.sh](./Shrink%20SD%20image/pishrink.sh)
