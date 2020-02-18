@@ -22,6 +22,8 @@ START_UP_SLEEP_TIME = 15
 SERVICE_WAIT_TIME = 3
 STARTUP_PERIOD = 100            #after reboot go into AP mode
 
+WPA_SUPPLICANT_HEADER = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n"
+
 
 def is_camera_stream_service_running():
     p = subprocess.Popen(["sudo", "systemctl", "status", "telraam_camera_stream"], stdout=subprocess.PIPE)
@@ -220,7 +222,7 @@ while True:
                 p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
                 p.communicate()
                 file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-                file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
+                file.write(WPA_SUPPLICANT_HEADER)
                 file.close()
 
                 setup_access_point()
@@ -232,7 +234,7 @@ while True:
             print("... The SSID was found, creating WPA supplicant, stopping hostapd service, starting dhcpcd service...")
             # SSID is new, so replace the conf file
             file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-            file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
+            file.write(WPA_SUPPLICANT_HEADER)
             file.write("\nnetwork={\n")
             file.write("\tssid=\"" + wifi_ssid + "\"\n")
             file.write("\tpsk=\"" + wifi_pwd + "\"\n")
@@ -284,7 +286,7 @@ while True:
                 p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
                 p.communicate()
                 file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-                file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
+                file.write(WPA_SUPPLICANT_HEADER)
                 file.close()
 
                 setup_access_point()
