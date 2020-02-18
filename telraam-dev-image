@@ -1,0 +1,6 @@
+You can download a telraam dev image here:
+https://telraam-api.net/telraam-dev-image.7z
+
+This image has pi:pi credentials.
+Please change the password for user pi and add your own user if you want access to the telraam.
+User pi can get a new random password at the nightly update.
