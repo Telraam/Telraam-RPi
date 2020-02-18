@@ -77,8 +77,3 @@ except Exception as e:
 print()
 print("Activating AP control loop service...");
 activate_ap_control_loop_service()
-
-print()
-print("Telraam auto-updater: rebooting...")
-time.sleep(REBOOT_WAIT_TIME)
-p = subprocess.call(["sudo", "/sbin/shutdown", "-r", "now"])
