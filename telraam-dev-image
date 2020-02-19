@@ -4,3 +4,6 @@ https://telraam-api.net/telraam-dev-image.7z
 This image has pi:pi credentials.
 Please change the password for user pi and add your own user if you want access to the telraam.
 User pi can get a new random password at the nightly update.
+
+SSH can be stopped during the nightly update.
+If you want to use it, make sure to reenable itafter the maintenance timeframe 0-4h
