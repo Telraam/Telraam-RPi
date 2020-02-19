@@ -6,4 +6,4 @@ Please change the password for user pi and add your own user if you want access 
 User pi can get a new random password at the nightly update.
 
 SSH can be stopped during the nightly update.
-If you want to use it, make sure to reenable itafter the maintenance timeframe 0-4h
+If you want to use it, make sure to re-enable it after the maintenance window 0-4h.
