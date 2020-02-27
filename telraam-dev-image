@@ -5,7 +5,7 @@ This image has pi:pi credentials.
 Please change the password for user pi and add your own user (with sudo rights) if you want access to the telraam.
 User pi can get a new random password at the nightly update.
 
-SSH deamon is not running by default, you have to enable it:
+SSH service is not running by default, you have to enable it:
 sudo systemctl enable ssh.service
 sudo systemctl start ssh.service
 
