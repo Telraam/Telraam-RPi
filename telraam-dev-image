@@ -2,8 +2,12 @@ You can download a telraam dev image here:
 https://telraam-api.net/telraam-dev-image.7z
 
 This image has pi:pi credentials.
-Please change the password for user pi and add your own user if you want access to the telraam.
+Please change the password for user pi and add your own user (with sudo rights) if you want access to the telraam.
 User pi can get a new random password at the nightly update.
+
+SSH deamon is not running by default, you have to enable it:
+sudo systemctl enable ssh.service
+sudo systemctl start ssh.service
 
 SSH can be stopped during the nightly update.
 If you want to use it, make sure to re-enable it after the maintenance window 0-4h.
