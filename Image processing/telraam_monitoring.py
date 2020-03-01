@@ -265,7 +265,10 @@ def find_contours(image):  # Defining how contours are found in a background-rem
     blur = cv2.blur(image, (10, 10))  # Gaussian blur applied to the background-removed image
     binarythreshold = set_binary_threshold(image)  # Get threshold setting
     ret, thresh1 = cv2.threshold(blur, binarythreshold, 255, cv2.THRESH_BINARY)  # Making the-background removed image binary
-    im2, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # Find contours (find the circumference of the objects)
+    if cv2.__version__.startswith('4'):
+        contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # Find contours (find the circumference of the objects)
+    else:
+        im2, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # Find contours (find the circumference of the objects)
     return contours, hierarchy
 
 
