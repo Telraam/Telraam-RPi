@@ -22,8 +22,6 @@ START_UP_SLEEP_TIME = 15
 SERVICE_WAIT_TIME = 3
 STARTUP_PERIOD = 100            #after reboot go into AP mode
 
-WPA_SUPPLICANT_HEADER = "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n"
-
 
 def is_camera_stream_service_running():
     p = subprocess.Popen(["sudo", "systemctl", "status", "telraam_camera_stream"], stdout=subprocess.PIPE)
@@ -64,6 +62,19 @@ def deactivate_monitoring_service():
     time.sleep(SERVICE_WAIT_TIME)
     print("Monitoring service deactivated.")
 
+def activate_dnsmasq_service():
+    p = subprocess.call(["sudo", "systemctl", "enable", "dnsmasq"])
+    p = subprocess.call(["sudo", "systemctl", "start", "dnsmasq"])
+    time.sleep(SERVICE_WAIT_TIME)
+    print("Dnsmasq service activated.")
+
+
+def deactivate_dnsmasq_service():
+    p = subprocess.call(["sudo", "systemctl", "stop", "dnsmasq"])
+    p = subprocess.call(["sudo", "systemctl", "disable", "dnsmasq"])
+    time.sleep(SERVICE_WAIT_TIME)
+    print("Dnsmasq service deactivated.")
+
 
 def run_camera_stream_service():
     if is_monitoring_service_running():
@@ -91,8 +102,10 @@ def setup_access_point():
         if line == '# TELRAAM\n':
             file.seek(pos, os.SEEK_SET)
             file.truncate()
-        break
+            break
     file.close()
+
+    activate_dnsmasq_service()
 
     # rewrite the last 3 lines (always after # TELRAAM)
     file = open("/etc/dhcpcd.conf", "a")
@@ -100,6 +113,7 @@ def setup_access_point():
     file.write("  static ip_address=192.168.254.1/24\n")
     file.write("  nohook wpa_supplicant")
     file.close()
+
     p = subprocess.Popen(["sudo", "service", "dhcpcd", "restart"])
     p.communicate()
 
@@ -116,7 +130,7 @@ def setup_access_point():
 
 def check_connection():
     # test the network connection by pinging the predefined (Google's) server
-    
+
     connection_ok = False
     current_time = 0
     while current_time < 20:
@@ -128,14 +142,14 @@ def check_connection():
         except Exception:
             current_time += 1
             time.sleep(1)
-    
+
     return connection_ok
 
 def get_uptime():
     with open('/proc/uptime', 'r') as f:
         uptime = float(f.readline().split()[0])
         return uptime
-    
+
     return None
 
 # sleep on start-up
@@ -152,9 +166,10 @@ if(not connection_ok or (uptime and uptime<STARTUP_PERIOD)):
     # enter AP mode if not already active
     p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
     p.communicate()
-    
+
     setup_access_point()
 else:
+    deactivate_dnsmasq_service()
     run_monitoring_service()
     status = STATUS_OK
 
@@ -222,7 +237,7 @@ while True:
                 p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
                 p.communicate()
                 file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-                file.write(WPA_SUPPLICANT_HEADER)
+                file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
                 file.close()
 
                 setup_access_point()
@@ -234,7 +249,7 @@ while True:
             print("... The SSID was found, creating WPA supplicant, stopping hostapd service, starting dhcpcd service...")
             # SSID is new, so replace the conf file
             file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-            file.write(WPA_SUPPLICANT_HEADER)
+            file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
             file.write("\nnetwork={\n")
             file.write("\tssid=\"" + wifi_ssid + "\"\n")
             file.write("\tpsk=\"" + wifi_pwd + "\"\n")
@@ -277,6 +292,7 @@ while True:
                 status = STATUS_OK
                 # already in wifi mode, so do nothing
 
+                deactivate_dnsmasq_service()
                 run_monitoring_service()
 
             except Exception:
@@ -286,7 +302,7 @@ while True:
                 p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
                 p.communicate()
                 file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
-                file.write(WPA_SUPPLICANT_HEADER)
+                file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
                 file.close()
 
                 setup_access_point()
