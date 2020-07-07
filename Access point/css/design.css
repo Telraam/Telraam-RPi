@@ -1,0 +1,334 @@
+body {
+    margin: 0;
+    padding:0;
+    width:100%;
+    height: 100%;
+    font-family: Arial;
+    text-align: center;
+    background-color: #e2eeea;
+}
+h1, h2 {
+    text-align: center;
+    border: 0;
+    color: #a5acb9;
+    margin: 0 0 30px 0;
+}
+h1 {
+    font-size: 40px;
+    line-height: 42px;
+}
+h2 {
+    text-align: center;
+    border: 0;
+    font-size: 20px;
+    line-height: 25px;
+    color: #a5acb9;
+    margin: 50px 0 30px 0;
+}
+.box {
+     clear:both;
+    margin: 20px 10px 50px 10px;
+    background: #FFF;
+    -webkit-box-shadow: 0px 5px 26px -2px #dce5ec;
+    box-shadow: 0px 5px 26px -2px #dce5ec;
+    border-radius: 10px;
+    padding: 20px 15px 50px 15px;
+}
+
+input {
+    margin: 10px 0;
+    outline: none;
+
+    tap-highlight-color: #eeeeee;
+    line-height: 1.21428571em;
+    min-height: 3.75em;
+    padding: 1em;
+    font-size: 1em;
+    background: #FFFFFF;
+    border: 1px solid #eeeeee;
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    padding: 20px;
+    width: 100%;
+    display: inline-block;
+}
+label {
+    font-size: 12px;
+    margin-top: 20px;
+    padding: 10px 0 5px 0;
+    display: inline-block;
+}
+select {
+    position: relative;
+    margin: 10px 0;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    tap-highlight-color: #eeeeee;
+    line-height: 1.21428571em;
+    min-height: 3.75em;
+    padding: 1em;
+    font-size: 1em;
+    background: #FFFFFF;
+    border: 1px solid #eeeeee;
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    padding: 20px;
+    width: 100%;
+    display: inline-block;
+}
+
+.select-container {
+    position: relative;
+    float: left;
+    min-width:100%;
+}
+.select-container:after {
+    content: '<>';
+    font: 17px monospace;
+    color: #333;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    right: 11px;
+    width: 40px;
+    /*Adjust for position however you want*/
+
+    top: 28px;
+    padding: 0 0 2px;
+    border-bottom: 1px solid #999;
+    /*left line */
+
+    position: absolute;
+    pointer-events: none;
+}
+
+input[type="submit"], input[type="Submit"] {
+    background-color: #69afb7;
+    color: #FFFFFF;
+    width: 200px;
+    margin-top: 25px;
+    cursor: pointer;
+}
+hr {
+    border: 0;
+    clear: both;
+    display: block;
+    margin: 20px auto;
+    text-align: center;
+    width: 100%;
+    background: rgba(1, 15, 30, 0.1);
+    height: 1px;
+    overflow: hidden;
+    position: relative;
+}
+hr::before {
+    animation-duration: 2s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+    animation-name: progress;
+    background: #111;
+    content: "";
+    display: block;
+    height: 1px;
+    position: absolute;
+    width: 80px;
+}
+.error {
+    color: #fc5462;
+    background-color: rgba(252, 84, 98, 0.2);
+    padding: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    border-bottom: 1px solid #ebebeb;
+    -webkit-box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
+    margin-bottom: 10px;
+}
+.success-notifcation {
+  color: #45b281;
+  background-color: #b0e6c7;
+  padding: 25px 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  border-bottom: 1px solid #ebebeb;
+  -webkit-box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
+  margin-bottom: 10px;
+  border-radius:5px;
+}
+@keyframes progress {
+    0% {
+        transform: translateX(0px);
+    }
+    100% {
+        transform: translateX(1440px);
+    }
+}
+
+.sticky {
+    position: fixed;
+    height: 80px;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color: #e2eff1;
+    border-top: 1px solid #69afb7;
+    box-shadow: 0px 5px 26px 2px rgba(0,0,0,0.1);
+    z-index:999;
+}
+.sticky h2 {
+    margin-top: 15px;
+    margin-bottom: 0px;
+}
+.number {
+    border-radius: 5px;
+    font-size: 17px;
+    line-height: 25px;
+    color: #69afb7;
+    font-weight: bold;
+    letter-spacing: 3px;
+    padding: 0px;
+    text-align:center;
+    text-shadow: 1px 1px #FFF;
+}
+
+.checkboxes div{
+	vertical-align: middle;
+}
+.checkboxes label {
+    display: inline-block;
+}
+.checkboxes input {
+    vertical-align: top;
+    float: left;
+    width: 20px;
+}
+.checkboxes label span {
+    display: inline-block;
+    padding: 10px;
+    vertical-align: top;
+    text-align: left;
+    width: 220px;
+}
+.checkboxes label span ul{
+    padding:0;
+    margin:0;
+}
+.checkboxes label span ul li{
+    margin-left: 15px;
+}
+/* ---------------------TOP: LANGUAGES & VERSION ---------- */
+.version {
+	float: left;
+	color: #a5acb9;
+  font-size: 12px;
+  margin: 12px 0 0 5px;
+  height: 30px;
+}
+ul.lang-link {
+  float: right;
+  text-align: right;
+  padding: 0;
+  margin: 10px 0 0 0;
+  height: 30px;
+}
+ul.lang-link li {
+    text-align: right;
+    list-style: none;
+    display: inline-block;
+    padding: 0;
+    margin:0;
+    border-right: 1px solid #a0ccc1;
+}
+ul.lang-link li:last-child {
+    border-right:0;
+}
+ul.lang-link li a {
+    display: inline-block;
+    text-decoration: none;
+    padding: 4px 6px 5px 4px;
+    color: #69afb7;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+/* --------------------- SPLASH ---------- */
+body.splash {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    background-image: url(../images/telraam_window_green.png);
+    background-size: cover;
+    background-attachment: fixed;
+    z-index: 200;
+    opacity: 0.95;
+    cursor: pointer;
+    background-position: center center;
+}
+.splash .box {
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+.splash h1 {
+    margin-top: 40px;
+}
+.splash .intro {
+    margin-top: 20px;
+}
+.splash .lang-box-container {
+    width:100%;
+    padding: 50px 0;
+}
+.splash .lang-box {
+    display: inline-block;
+    border: 1px solid #ccc;
+    background-color: #FFF;
+    color: #69afb7;
+    font-size: 22px;
+    border-radius: 5px;
+    width: 20%;
+    margin: 10px;
+    padding: 50px 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 800;
+}
+.more_info {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #eee;
+  color: #000;
+  text-align: left;
+  font-size: 12px
+}
+
+
+/* LARGE ONLY */
+
+@media screen and (min-width: 600px) {
+
+    .checkboxes label span {
+        display: inline-block;
+        padding: 10px;
+        vertical-align: top;
+        text-align: left;
+        width: 450px;
+    }
+
+}
+
+/* LARGE ONLY */
+
+@media screen and (max-width: 600px) {
+
+    .splash .lang-box {
+        width:80%;
+    }
+
+}
