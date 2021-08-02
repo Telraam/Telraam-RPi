@@ -4,6 +4,7 @@
 * [Running Telraam on the Raspberry Pi](https://github.com/Telraam/Telraam-RPi#running-telraam-on-the-raspberry-pi)
 * [Automatic updating](https://github.com/Telraam/Telraam-RPi#automatic-updating)
 * [Image processing](https://github.com/Telraam/Telraam-RPi#image-processing)
+* [Change Log](https://github.com/Telraam/Telraam-RPi#change-log)
 
 ## Introduction
 
@@ -87,3 +88,19 @@ There is extensive documentation in the form of end-of-the-line comments in the 
 - [ ] Properly parallelise observing and tracking loops (assuming the Bayesian tracking can be made real-time; during actively observing the contour data from the previous observing window could be tracked and transferred, saving valuable uptime).
 - [ ] Better background calculation logic that can better handle situations with traffic standstills.
 - [ ] Go wild, anything that can improve the speed and quality of image processing, object matching and tracking, and data transfer.
+
+## Change Log
+* V11 - Aug 2021
+    * Improved installation interface
+    * Validation of the wifi settings
+    * Check on the connection with the TELRAAM hotspot
+    * Forcing the telraam to the best wifi connection
+    * Bugfixes
+
+* V10 - Aug 2020
+    * The possibility to send a daily background image to verify the camera position. (https://telraam.zendesk.com/hc/en/articles/360045070292-Achtergrondbeeld-Telraam)
+    * Catch all for DNS queries so my.telraam.net (or any other url) can be used instead of 192.168.254.1
+    * Do not reconnect to wifi when already connected after nightly update
+
+* V9 - April 2019
+    * Initial version
