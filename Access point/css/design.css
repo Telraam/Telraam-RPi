@@ -25,8 +25,18 @@ h2 {
     color: #a5acb9;
     margin: 50px 0 30px 0;
 }
+h3 {
+  clear:both;
+  text-align: center;
+  border: 0;
+  font-size:11px;
+  line-height: 15px;
+  margin: 30px 0 10px 0;
+}
+
+
 .box {
-     clear:both;
+    clear:both;
     margin: 20px 10px 50px 10px;
     background: #FFF;
     -webkit-box-shadow: 0px 5px 26px -2px #dce5ec;
@@ -35,10 +45,51 @@ h2 {
     padding: 20px 15px 50px 15px;
 }
 
+/* header */
+.connection-sticky .success {
+   padding: 10px;
+   font-size: 12px; 
+}
+.connection-sticky .error {
+   padding: 10px;
+   font-size: 12px; 
+}
+.green-dot {
+  height: 10px;
+  width: 10px;
+  background-color: #45b281;
+  border-radius: 50%;
+  margin-right: 15px;
+  display: inline-block;
+}
+.content {
+  padding: 15px;
+}
+
+img.camera {
+  background-color: #ccc;
+  background-image: url('no-signal.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 300px;
+}
+input {
+  border-radius: 0;
+}
+input[type="submit"], input[type="Submit"] {
+  -webkit-appearance: none;
+}
+
+
+img.no-signal:after{
+  content: "(url: " attr(src) ")";
+}
+form {
+  margin-bottom: 100px;
+}
 input {
     margin: 10px 0;
     outline: none;
-
     tap-highlight-color: #eeeeee;
     line-height: 1.21428571em;
     min-height: 3.75em;
@@ -148,6 +199,7 @@ hr::before {
     box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
     margin-bottom: 10px;
 }
+.success,
 .success-notifcation {
   color: #45b281;
   background-color: #b0e6c7;
@@ -155,11 +207,13 @@ hr::before {
   text-transform: uppercase;
   letter-spacing: 1px;
   text-align: center;
-  border-bottom: 1px solid #ebebeb;
   -webkit-box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
   box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.055);
   margin-bottom: 10px;
   border-radius:5px;
+}
+.success-notifcation.no-background {
+  background-color: transparent;
 }
 @keyframes progress {
     0% {
@@ -172,23 +226,23 @@ hr::before {
 
 .sticky {
     position: fixed;
-    height: 80px;
+    height: 110px;
     bottom:0;
     left:0;
     right:0;
     background-color: #e2eff1;
     border-top: 1px solid #69afb7;
-    box-shadow: 0px 5px 26px 2px rgba(0,0,0,0.1);
+    box-shadow: 0px 5px 26px 2px rgba(0,0,0,0.3);
     z-index:999;
 }
-.sticky h2 {
-    margin-top: 15px;
+.sticky h3 {
+    margin-top: 5px;
     margin-bottom: 0px;
+    
 }
 .number {
-    border-radius: 5px;
-    font-size: 17px;
-    line-height: 25px;
+    font-size: 16px;
+    line-height:18px;
     color: #69afb7;
     font-weight: bold;
     letter-spacing: 3px;
@@ -256,6 +310,33 @@ ul.lang-link li a {
     font-size: 12px;
     text-transform: uppercase;
 }
+
+/* ---------------------- ICONS ---------- */
+.wifi-pwd-field {
+  position: relative;
+}
+.icon-field {
+  position: absolute;
+  display:inline-block;
+  text-indent: -9999px;
+  width: 36px;
+  height: 36px;
+  background-image: url(eye-open.svg);
+  background-size: 36px 36px;
+  background-repeat: no-repeat;
+  margin-left: 2px;
+  padding: 0;
+  top: 20px;
+  right: 10px;
+}
+.icon-eye {
+  background-image: url(eye-open.svg);
+}
+.icon-eye.closed {
+  background-image: url(eye-closed.svg);
+}
+
+
 /* --------------------- SPLASH ---------- */
 body.splash {
     width: 100%;
@@ -292,11 +373,12 @@ body.splash {
     border-radius: 5px;
     width: 20%;
     margin: 10px;
-    padding: 50px 15px;
+    padding: 20px 15px;
     text-decoration: none;
     text-transform: uppercase;
     text-align: center;
     font-weight: 800;
+    font-size: 14px;
 }
 .more_info {
   padding: 0 18px;
@@ -309,6 +391,230 @@ body.splash {
 }
 
 
+/* Style the buttons that are used to open the tab content */
+/* Style the tab buttons */
+.tab-link {
+  background-color: transparent;
+  border:1px solid #69afb7;
+  border-top: 0;
+  color: #69afb7;
+  float: left;
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  font-size: 15px;
+  width: 50%;
+  height: 60px;
+  margin-bottom: 10px;
+}
+.tab-link.first {
+  border-right: 0;
+}
+.tab-link.active {
+  background-color: rgba(255,255,255,0.5);
+}
+.tab-link.disabled {
+  color: #CCC;
+  opacity:0.5;
+  cursor: not-allowed;
+}
+/* Style the tab */
+.tab-content {
+  padding-bottom: 100px;
+}
+
+
+/* Change background color of buttons on hover */
+.tablink:hover {
+  background-color: #777;
+}
+.footer {
+  
+}
+.footer .number {
+  color: #ccc;
+  font-size: 12px;
+  padding-top: 40px;
+}
+
+.loading-available-networks {
+  color: grey;
+}
+/* --------------------- PROGRES ---------- */
+.making-the-connection {
+  position: fixed;
+  top: 0;
+  left:0;
+  z-index:999;
+  background: rgba(0,0,0,0.9);
+  height: 100%;
+  width: 100%;
+  padding: 60px 40px;
+  color: #fff;
+  box-sizing: border-box;
+}
+.making-the-connection .error {
+  border:0;
+}
+.progress-note {
+  margin-top: 25px;
+}
+.progress-note.error {
+  background: transparent;
+}
+#progress-container {
+  background: rgba(105,175,183, 0.3);
+  border-radius: 10px;
+}
+#progress {
+  position: relative;
+  overflow: hidden;
+  z-index: 999;
+  top: 0;
+  left: 0px;
+  width: 0%;
+  height: 25px;
+  background: #69afb7;
+  border-radius: 10px;
+  animation: progress-bar-stripes 2s linear infinite;
+  background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+  background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+  background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+  -webkit-background-size: 40px 40px;
+  background-size: 40px 40px;
+}
+/* done general */
+#progress.done {
+  animation: none;
+}
+#progress.errorbar {
+  display: none;
+}
+
+#progress.successbar {
+  animation: none;
+  background: transparent;
+  height: 50px;
+  width: 100%;
+  border: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('check.svg');
+  background-size: 35px 35px;
+}
+.go-telraam {
+  display: block;
+  margin-top: 25px;
+}
+.go-telraam a {
+  color: #69afb7;
+  text-decoration: none;
+}
+
+@-webkit-keyframes progress-bar-stripes {
+  from  { background-position: 40px 0; }
+  to    { background-position: 0 0; }
+}
+
+#progress dd,#progress dt {
+  position: absolute;
+  top: 0;
+  height: 2px;
+  border-radius: 100%;
+}
+#progress dd {
+  opacity: 1;
+  width: 20px;
+  right: 0;
+  clip: rect(-6px,22px,14px,10px)
+}
+#progress dt {
+  opacity: 1;
+  width: 180px;
+  right: -80px;
+  clip: rect(-6px,90px,14px,-6px)
+}
+.progress-close-button {
+  text-align: center;
+  border-radius: 5px;
+  padding: 10px;
+  color: #FFF;
+  margin-top: 30px;
+  cursor: pointer;
+  background: rgba(105,175,183, 0.3);
+  border:1px solid #69afb7;
+}
+.progress-close-button:hover {
+  background: rgba(105,175,183, 0.8);
+}
+
+@-moz-keyframes pulse {
+  30% {
+      opacity: 1
+  }
+  60% {
+      opacity: 0
+  }
+  100% {
+      opacity: 1
+  }
+}
+@-ms-keyframes pulse {
+  30% {
+      opacity: .6
+  }
+  60% {
+      opacity: 0
+  }
+  100% {
+      opacity: .6
+  }
+}
+@-o-keyframes pulse {
+  30% {
+      opacity: 1
+  }
+  60% {
+      opacity: 0
+  }
+  100% {
+      opacity: 1
+  }
+}
+@-webkit-keyframes pulse {
+  30% {
+      opacity: .6
+  }
+  60% {
+      opacity: 0
+  }
+  100% {
+      opacity: .6
+  }
+}
+@keyframes pulse {
+  30% {
+      opacity: 1
+  }
+  60% {
+      opacity: 0
+  }
+  100% {
+      opacity: 1
+  }
+}
+#progress.waiting dd,#progress.waiting dt {
+  -moz-animation: pulse 2s ease-out 0s infinite;
+  -ms-animation: pulse 2s ease-out 0s infinite;
+  -o-animation: pulse 2s ease-out 0s infinite;
+  -webkit-animation: pulse 2s ease-out 0s infinite;
+  animation: pulse 2s ease-out 0s infinite
+}
+
+.refresh {
+  text-decoration: underline;
+}
 /* LARGE ONLY */
 
 @media screen and (min-width: 600px) {
@@ -332,3 +638,7 @@ body.splash {
     }
 
 }
+
+
+
+
