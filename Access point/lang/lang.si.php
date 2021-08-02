@@ -22,4 +22,23 @@
 	$language["more_info"]="Več informacij";
 	$language["send_background_more_info"]="<p>Če potrdite to polje, lahko na svoji nadzorni plošči preverite najnovejšo sliko ozadja svojega Telraama, kar vam omogoča enostavno preverjanje, ali je kamera še vedno pravilno usmerjena, ne da bi se vam bilo treba ponovno povezati s Telraamom. Poiščite najnovejše podatke o fotografiji, ki jo želite obiskati in v njej dodati 1 fotografijo v bazi podatkov..</p><p>Za zagotovitev zasebnosti mimoidočih uporabljamo dve tehniki:<ol><li>Za 30 sekund fotografiramo ozadje in vzamemo srednjo vrednost na pik; zaradi tega bodo vsi premikajoči se objekti nevidni.</li><li>Sliko v obliki piksela izkrivljamo v (izjemno) nizki ločljivosti (https://en.wikipedia.org/wiki/Pixelation).</li></ol></p><p>Če ne želite, da Telraam shranjuje ozadje slike, lahko še vedno preverite sliko kamere svojega Telraama, tako da se ročno povežete s svojo napravo Telraam prek omrežja WiFi Telraam: https://telraam.zendesk.com/hc/en-us/articles/360026468392-Camera-position-checking-images.</p>";
 	$language["save_success"]="Vaše nastavitve so bile uspešno shranjene!";
+	$language["service_not_running"]="Storitve telraam_ap_control_service ni mogoče najti";
+	$language["interrupt_sent"]="Povezava je vzpostavljena";
+	$language["connect_now"]="Povežite se zdaj";
+	$language["save_and_connect"] = "Shrani in poveži";
+	$language["connection_error"] = "Povezava z vročo točko TELRAAM je izgubljena";
+	$language["making_the_connection_title"] = "Povezovanje z omrežjem wifi";
+	$language["making_the_connection_info"] = "Preverili bomo, ali je povezava uspešna z vnesenimi poverilnicami wifi. To traja približno dve minuti.";
+	$language["making_the_connection_btn"] = "Ponovno vzpostavite povezavo z vročo točko TELRAAM in poskusite znova z novimi podatki wifi";
+	$language["progress_note_ok"] = "Pooblastila wifi se zdijo v redu! Namestitev je končana.";
+	$language["progress_note_nok"] = "Vašega telraama nismo mogli povezati z brezžičnim internetom. Prosimo, preverite poverilnice.";
+	$language["wifi_network_loading"] = "Preverili bomo, katera omrežja wifi so na voljo. Počakajte...";
+	$language["wifi_network_loading_short"] = "Iskanje WiFi omrežja";
+	$language["connection_active"] = "Dejanje vroče točke met de TELRAAM je aktivno";
+
+	$language["tab_camera_image"] = "Postavitev kamere";
+	$language["tab_wifi"] = "Povezava Wifi";
+	$language["go_to_telraam"] = "telraam.net"
+
+
 ?>
