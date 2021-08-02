@@ -1,9 +1,13 @@
-import MySQLdb
 import socket
 import subprocess
 import signal
 import os
 import time
+import re
+import signal
+import requests
+import uuid
+import json
 
 # endpoint for checking internet connection (this is Google's public DNS server)
 DNS_HOST = "8.8.8.8"
@@ -21,6 +25,19 @@ CONTROL_LOOP_INTERVAL = 10 * 60
 START_UP_SLEEP_TIME = 15
 SERVICE_WAIT_TIME = 3
 STARTUP_PERIOD = 100            #after reboot go into AP mode
+
+#wifi credentials file
+WIFI_CREDENTIALS_FILE='/home/pi/Telraam/Scripts/json/telraam_wifi.json'
+
+
+#var and function for the interrupt from php
+BREAK_LOOP=False
+def signal_received(signal_number, frame):
+    global BREAK_LOOP
+    BREAK_LOOP=True
+
+    print('Interrupt received!')
+signal.signal(signal.SIGUSR1, signal_received)    
 
 
 def is_camera_stream_service_running():
@@ -113,7 +130,7 @@ def setup_access_point():
     file.write("  static ip_address=192.168.254.1/24\n")
     file.write("  nohook wpa_supplicant")
     file.close()
-
+    
     p = subprocess.Popen(["sudo", "service", "dhcpcd", "restart"])
     p.communicate()
 
@@ -130,7 +147,9 @@ def setup_access_point():
 
 def check_connection():
     # test the network connection by pinging the predefined (Google's) server
-
+    
+    print('Checking wifi connection')
+    
     connection_ok = False
     current_time = 0
     while current_time < 20:
@@ -142,16 +161,121 @@ def check_connection():
         except Exception:
             current_time += 1
             time.sleep(1)
-
+    
+    print('connection_ok: {}'.format(connection_ok))
+    
     return connection_ok
 
 def get_uptime():
     with open('/proc/uptime', 'r') as f:
         uptime = float(f.readline().split()[0])
         return uptime
-
+    
     return None
 
+def get_wifi_credentials():
+    print('Getting wifi credentials from file')
+    
+    try:
+        with open(WIFI_CREDENTIALS_FILE) as wifi_file:
+            data=json.load(wifi_file)
+            # print(data)
+            return data['wifi_ssid'], data['wifi_pwd']
+    except FileNotFoundError as e:
+        print('FileNotFoundError:\n{}'.format(e))
+    return '', ''
+
+def get_wifi_bssid(ssid):
+    print('... Getting wifi bssid for ssid={}'.format(ssid))
+
+    ap_list=[]
+    out_newlines=None
+
+    for i in range(5):              #try max 5 times
+        print('\ttrying... {}'.format(i))
+    
+        scan_cmd='sudo iw dev wlan0 scan ap-force'
+        process = subprocess.Popen([scan_cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        out, err = process.communicate()
+        
+        if(len(err)==0):                                                #the command did not produce an error so e can process the list of access points
+            out_newlines=str(out).replace('\\n', '\n')                  #because of the bytes to str conversion newlines are \\n instead of \n
+            
+            break
+        else:
+            print('\terror: {}'.format(err))
+
+        time.sleep(2)                                                   #sleep before retrying
+        
+    if(not out_newlines):                                               #the command produced an error every time, return no bssid
+        return None
+        
+    split_str=re.findall('BSS.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*SSID.*\n', out_newlines, re.MULTILINE)
+
+    for cell in split_str:     
+        ap={}
+        ap['bssid']=None
+        ap['frequency']=None
+        ap['signal']=None
+        ap['ssid']=None
+        
+        m=re.search('BSS\s*([0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2})', cell)
+        if(m):
+            ap['bssid']=m.group(1)
+
+        m=re.search('freq:\s*(\d+)', cell)
+        if(m):
+            ap['frequency']=int(m.group(1))
+        
+        m=re.search('signal:\s*(-?\d+\.\d+)\s*dBm', cell)
+        if(m):
+            ap['signal']=float(m.group(1))
+        
+        m=re.search('SSID:\s*(.+)', cell)
+        if(m):
+            ap['ssid']=m.group(1)
+        
+        ap_list.append(ap)
+
+    ap_list=[x for x in ap_list if x['ssid']==ssid]                     #filter for ssid
+    
+    print('Access points found for ssid={}:'.format(ssid))
+    for ap in ap_list:
+        print(ap)
+    
+    ap_list=[x for x in ap_list if x['frequency']<2500]                 #filter for 2.4 GHz wifi band -> freqs lower than 2500 MHz
+    ap_list=sorted(ap_list, key=lambda x: x['signal'], reverse=True)    #sort on signal_level
+    
+    if(len(ap_list)>0):
+        print('Using access point: {}'.format(ap_list[0]))
+        return ap_list[0]['bssid']
+    else:
+        print('Did not find any access points')
+        return None
+
+def send_online_ping():
+    print('send_online_ping')
+    url='http://telraam-api.net/v1/private/online'
+    token='4M2u0kLC2WPL7oLMA4NC1yWevHJilMz2MGnQym00'
+    headers={'Content-Type': "application/json", 'X-Api-Key': token}
+    
+    data={
+        "mac": uuid.getnode()
+    }
+    
+    for i in range(5):              #try 5 times max
+        try:
+            ret = requests.post(url, headers=headers, data=json.dumps(data), timeout=30)
+            
+            if ret.status_code==200:
+                print('ping sent')
+                break
+            else:
+                print('retrying, status code={}'.format(ret.status_code))
+        except Exception as e:
+            print('exception when posting to url:{}'.format(e))
+        
+        
 # sleep on start-up
 print("Sleeping " + str(round(START_UP_SLEEP_TIME)) + " seconds during startup...")
 time.sleep(START_UP_SLEEP_TIME)
@@ -166,7 +290,7 @@ if(not connection_ok or (uptime and uptime<STARTUP_PERIOD)):
     # enter AP mode if not already active
     p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
     p.communicate()
-
+    
     setup_access_point()
 else:
     deactivate_dnsmasq_service()
@@ -182,50 +306,23 @@ while True:
     uptime = get_uptime()
     wait_time = CONTROL_LOOP_INTERVAL - uptime%CONTROL_LOOP_INTERVAL
     print("Waiting " + str(round(wait_time)) + " seconds to start main control loop...")
-    time.sleep(wait_time)
+    for i in range(int(wait_time)+1):
+        time.sleep(1)
+        
+        if(BREAK_LOOP):
+            print('Breaking the wait loop')
+            BREAK_LOOP=False
+            break
+    
     print("... Main control loop activated...")
 
-    # connect to Pi's database and retrieve wifi settings
-    print()
-    print("Checking database for wifi connection information...")
-    db = MySQLdb.connect(host="localhost", user="pi", passwd="pi", db="telraam")
-    cur = db.cursor()
-    cur.execute("SELECT * FROM connection;")
-    wifi_ssid = ""
-    wifi_pwd = ""
-    for row in cur.fetchall():
-        wifi_ssid = row[0]
-        wifi_pwd = row[1]
-        cur.close()
-    db.close()
+    wifi_ssid, wifi_pwd=get_wifi_credentials()
 
     # check status
-    if status == STATUS_OK:
-        try:
-            connection_ok= check_connection()
-            if not connection_ok:
-                raise Exception
-            print("... Connected to network " + wifi_ssid + "; now sleeping...")
-            # already in wifi mode, so do nothing
-
-        except Exception:
-            # failed to connect
-            status = STATUS_NOK
-            print("... Connection to the network failed; updating status...")
-
-            # enter AP mode if not already active
-            # check if AP mode is active
-            exit_code = 1
-            with open(os.devnull, 'wb') as hide_output:
-                exit_code = subprocess.Popen(['service', 'hostapd', 'status'], stdout=hide_output, stderr=hide_output).wait()
-            if exit_code:
-                p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
-                p.communicate()
-
-                setup_access_point()
-
-            else:
-                print('... Pi is in AP mode (internal conflict).')
+    connection_ok= check_connection()
+    if connection_ok:
+        print("... Connected to network " + wifi_ssid + "; now sleeping...")
+        # already in wifi mode, so do nothing
     else:
         if len(wifi_ssid) < 0 or len(wifi_pwd) < 4:
             print("... No valid wifi access codes provided in database.")
@@ -247,11 +344,17 @@ while True:
 
         else:
             print("... The SSID was found, creating WPA supplicant, stopping hostapd service, starting dhcpcd service...")
+            
+            wifi_bssid=get_wifi_bssid(wifi_ssid)
+            
             # SSID is new, so replace the conf file
             file = open("/etc/wpa_supplicant/wpa_supplicant.conf", "w")
             file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
             file.write("\nnetwork={\n")
-            file.write("\tssid=\"" + wifi_ssid + "\"\n")
+            if(not wifi_bssid): 
+                file.write("\tssid=\"" + wifi_ssid + "\"\n")
+            else:
+                file.write("\tbssid=" + wifi_bssid + "\n")
             file.write("\tpsk=\"" + wifi_pwd + "\"\n")
             file.write("\tscan_ssid=1\n")
             file.write("}")
@@ -281,18 +384,19 @@ while True:
             wait_time = 10
             print("... Services are restarting, waiting " + str(round(wait_time)) + " seconds...")
             time.sleep(wait_time)
-            print("Checking wifi connection...")
 
             # check connection
             try:
                 connection_ok= check_connection()
                 if not connection_ok:
                     raise Exception
+                
                 print("Connected to " + wifi_ssid + " updating status")
                 status = STATUS_OK
                 # already in wifi mode, so do nothing
 
                 deactivate_dnsmasq_service()
+                send_online_ping()
                 run_monitoring_service()
 
             except Exception:
@@ -306,4 +410,5 @@ while True:
                 file.close()
 
                 setup_access_point()
+
 
