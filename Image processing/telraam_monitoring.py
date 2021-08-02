@@ -1,6 +1,8 @@
 # TELRAAM monitoring script by Dr. Péter I. Pápics (Transport & Mobility Leuven)
 #
 # Version history:
+# v0028: (C. Van Poyer) use json instead of mysql
+# v0027: (C. Van Poyer) added timeouts to requests.post
 # v0026: (C. Van Poyer) added sending background image at startup and at 12h
 # v0025: (P. Papics) commented out lines 540-550 to temporarily disable the transfer of raw contour data to the server
 # v0024: (S. Maerivoet) modified the test-flag to verbose and separated test image saving from verbose mode
@@ -39,9 +41,8 @@ import requests
 import base64
 from datetime import datetime
 from math import floor
-import mysql.connector
 
-__version__ = '2020.06.11'
+__version__ = '2021.06.14'
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Parameter definitions
@@ -271,8 +272,8 @@ def find_contours(image):  # Defining how contours are found in a background-rem
     blur = cv2.blur(image, (10, 10))  # Gaussian blur applied to the background-removed image
     binarythreshold = set_binary_threshold(image)  # Get threshold setting
     ret, thresh1 = cv2.threshold(blur, binarythreshold, 255, cv2.THRESH_BINARY)  # Making the-background removed image binary
-
-
+    
+    
 #     im2, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  # Find contours (find the circumference of the objects)
 
     contours=None
@@ -467,7 +468,7 @@ def send_json_raw_contours(data, url=URL_RAW_CONTOURS, head=HEAD_RAW_CONTOURS):
                 dict_list_raw_contours_payload = dict_list_raw_contours
                 dict_list_raw_contours_rest = []
             payload = json.dumps(dict_list_raw_contours_payload)
-            ret = requests.post(url, headers=head, data=payload)
+            ret = requests.post(url, headers=head, data=payload, timeout=30)
             if ret.status_code != 200:  # If the data transfer gave an error, we go and try again
                 raise Exception(ret.content)
             dict_list_raw_contours = dict_list_raw_contours_rest  # Only if the data transfer for one segment went through, will we pass to the next segment, or to an empty list at the end
@@ -498,7 +499,7 @@ def send_json_summary(data, url=URL_SUMMARY, head=HEAD_SUMMARY):
                 dict_list_summary_payload = dict_list_summary
                 dict_list_summary_rest = []
             payload = json.dumps(dict_list_summary_payload)
-            ret = requests.post(url, headers=head, data=payload)
+            ret = requests.post(url, headers=head, data=payload, timeout=30)
             if ret.status_code != 200:  # If the data transfer gave an error, we go and try again
                 raise Exception(ret.content)
             dict_list_summary = dict_list_summary_rest  # Only if the data transfer for one segment went through, will we pass to the next segment, or to an empty list at the end
@@ -529,7 +530,7 @@ def send_json_uptime(data, url=URL_UPTIME, head=HEAD_UPTIME):
                 dict_list_uptime_payload = dict_list_uptime
                 dict_list_uptime_rest = []
             payload = json.dumps(dict_list_uptime_payload)
-            ret = requests.post(url, headers=head, data=payload)
+            ret = requests.post(url, headers=head, data=payload, timeout=30)
             if ret.status_code != 200:  # If the data transfer gave an error, we go and try again
                 raise Exception(ret.content)
             dict_list_uptime = dict_list_uptime_rest  # Only if the data transfer for one segment went through, will we pass to the next segment, or to an empty list at the end
@@ -595,80 +596,83 @@ def field_of_view(image):  # Define simple plotting function for field-of-view s
         return 0
     else:
         return 1
-
+    
 def check_permission_send_camera_setup_data():
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="pi",
-        passwd="pi",
-        database="telraam"
-    )
+    settings_file='/home/pi/Telraam/Scripts/json/telraam_settings.json'
 
-    query="SELECT value FROM settings where setting='send_background'"
-    cur=mydb.cursor(dictionary=True)
-    cur.execute(query)
-    setting=cur.fetchone()
+    permission=None
+    try:
+        with open(settings_file) as json_file:
+            settings_data=json.load(json_file)
+            permission=settings_data['send_background']
+    except FileNotFoundError as e:
+        #settings file is not found
+        pass
+    
+    return permission
 
-    return bool(int(setting['value']))
-
-
+    
 def send_camera_setup_data(background):
     print('send_camera_setup_data')
-
-    image_type='png'
-    token='4M2u0kLC2WPL7oLMA4NC1yWevHJilMz2MGnQym00'
-    url='https://telraam-api.net/prod/provisioning/upload-camera-setup-data'
-    headers={'Content-Type': "application/json", 'X-Api-Key': token}
-    version_file='/home/pi/Telraam/Scripts/telraam_version.json'
-    pixelate_factor=5
-
-    image=None
-    permission=check_permission_send_camera_setup_data()
-    if(permission):
-        print('permission ok')
-        height, width = background.shape[:2]
-        # Desired "pixelated" size
-        height_pixelated, width_pixelated=(floor(height/pixelate_factor), floor(width/pixelate_factor))
-        # Resize input to "pixelated" size
-        temp = cv2.resize(background, (width_pixelated, height_pixelated), interpolation=cv2.INTER_LINEAR)
-        # Initialize output image
-        pixelated = cv2.resize(temp, (width, height), interpolation=cv2.INTER_NEAREST)
-
-
-        retval, buffer_img= cv2.imencode('.{}'.format(image_type), pixelated)
-        b64data = base64.b64encode(buffer_img)
-        image=b64data.decode("utf-8")
-    else:
-        print('permission nok')
-
-    version=None
+    
     try:
-        with open(version_file) as json_file:
-            version_data=json.load(json_file)
-            version=version_data['version']
-    except FileNotFoundError as e:
-        #version file is not found
-        pass
-
-    data={
-            "mac": uuid.getnode(),
-            "image_format": image_type,
-            "sensor_image_version": version,
-            "send_permission": permission,
-            "image":  image
-        }
-
-    try:
-        ret = requests.post(url, headers=headers, data=json.dumps(data))
-
-        if ret.status_code==200:
-            return True, 'code==200'
+        image_type='png'
+        token='4M2u0kLC2WPL7oLMA4NC1yWevHJilMz2MGnQym00'
+        url='https://telraam-api.net/prod/provisioning/upload-camera-setup-data'
+        headers={'Content-Type': "application/json", 'X-Api-Key': token}
+        version_file='/home/pi/Telraam/Scripts/json/telraam_version.json'
+        pixelate_factor=5
+        
+        image=None
+        permission=check_permission_send_camera_setup_data()
+        if(permission):
+            print('permission ok')
+            height, width = background.shape[:2]
+            # Desired "pixelated" size
+            height_pixelated, width_pixelated=(floor(height/pixelate_factor), floor(width/pixelate_factor))      
+            # Resize input to "pixelated" size
+            temp = cv2.resize(background, (width_pixelated, height_pixelated), interpolation=cv2.INTER_LINEAR)
+            # Initialize output image
+            pixelated = cv2.resize(temp, (width, height), interpolation=cv2.INTER_NEAREST)
+            
+            
+            retval, buffer_img= cv2.imencode('.{}'.format(image_type), pixelated)
+            b64data = base64.b64encode(buffer_img)
+            image=b64data.decode("utf-8")
         else:
-            return False, 'code={}'.format(ret.status_code)
-    except requests.exceptions.ConnectionError as e:
-        #post url is not available
-        return False, 'ConnectionError'
-
+            print('permission nok')
+        
+        version=None
+        try:
+            with open(version_file) as json_file:
+                version_data=json.load(json_file)
+                version=version_data['version']
+        except FileNotFoundError as e:
+            #version file is not found
+            pass
+        
+        data={
+                "mac": uuid.getnode(),
+                "image_format": image_type,
+                "sensor_image_version": version,
+                "send_permission": permission,
+                "image":  image
+            }
+        
+        try:
+            ret = requests.post(url, headers=headers, data=json.dumps(data), timeout=30)
+            
+            if ret.status_code==200:
+                return True, 'code==200'
+            else:
+                return False, 'code={}'.format(ret.status_code)
+        except Exception as e:
+            #post url is not available
+            return False, 'ConnectionError'
+    
+    except Exception:
+        return False, 'Exception'
+    
     return True, 'default'
 
 # Here we define some aids
@@ -707,7 +711,7 @@ background = background_calculation()
 
 #do not send background after nighltly updates 0-4h
 now=datetime.now()
-if(now.hour>5):
+if(now.hour>5):                                     
     ret, msg=send_camera_setup_data(background)
     print('ret={}'.format(ret))
     print('msg={}'.format(msg))
@@ -752,19 +756,19 @@ while(True):
 
     if (frame_time-background_time > MAX_TIME_BETWEEN_BACKGROUND) or (frame_time-background_time > PREFERRED_TIME_BETWEEN_BACKGROUND and last_frame_is_empty >= 1):  # If we have to, we calculate a new background
         background = background_calculation()
-
+        
         print('after background_calculation')
-
+        
         now=datetime.now()
-
+        
         if(now.hour==SEND_CAMERA_SETUP_DATA_HOUR and (not last_camera_setup_data_sent or last_camera_setup_data_sent.day!=now.day)):
 #         if(now.minute>35 and (not last_camera_setup_data_sent or last_camera_setup_data_sent.hour!=now.hour)):
             print('sending background')
-
+            
             ret, msg=send_camera_setup_data(background)
             print('ret={}'.format(ret))
             print('msg={}'.format(msg))
-
+            
             if(ret):
                 last_camera_setup_data_sent=now
 
