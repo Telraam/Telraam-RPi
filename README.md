@@ -90,6 +90,11 @@ There is extensive documentation in the form of end-of-the-line comments in the 
 - [ ] Go wild, anything that can improve the speed and quality of image processing, object matching and tracking, and data transfer.
 
 ## Change Log
+* V11b - Apr 2022
+   * fixed security problem where wifi password was visible on the TELRAAM hotspot webpage
+   * new logo
+   * small css changes
+
 * V11 - Aug 2021
     * Improved installation interface
     * Validation of the wifi settings
