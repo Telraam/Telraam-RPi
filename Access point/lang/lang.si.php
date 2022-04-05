@@ -31,14 +31,15 @@
 	$language["making_the_connection_info"] = "Preverili bomo, ali je povezava uspešna z vnesenimi poverilnicami wifi. To traja približno dve minuti.";
 	$language["making_the_connection_btn"] = "Ponovno vzpostavite povezavo z vročo točko TELRAAM in poskusite znova z novimi podatki wifi";
 	$language["progress_note_ok"] = "Pooblastila wifi se zdijo v redu! Namestitev je končana.";
-	$language["progress_note_nok"] = "Vašega telraama nismo mogli povezati z brezžičnim internetom. Prosimo, preverite poverilnice.";
+	$language["progress_note_nok"] = "Povezave Wi-Fi nismo mogli vzpostaviti. Povezava je bila morda uspešna. To lahko preverite v nadaljnjih korakih namestitve na nadzorni plošči.";
 	$language["wifi_network_loading"] = "Preverili bomo, katera omrežja wifi so na voljo. Počakajte...";
 	$language["wifi_network_loading_short"] = "Iskanje WiFi omrežja";
 	$language["connection_active"] = "Dejanje vroče točke met de TELRAAM je aktivno";
 
 	$language["tab_camera_image"] = "Postavitev kamere";
 	$language["tab_wifi"] = "Povezava Wifi";
-	$language["go_to_telraam"] = "telraam.net"
+	$language["go_to_telraam"] = "telraam.net";
+	$language["edit-password"] = "Prilagoditev geslo";
 
 
 ?>

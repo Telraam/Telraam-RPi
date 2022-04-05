@@ -31,14 +31,15 @@
 	$language["making_the_connection_info"] = "We will check if the connection is successful with your entered Wi-Fi credentials. This takes about two minutes.";
 	$language["making_the_connection_btn"] = "Reconnect to the TELRAAM hotspot and try again with new wifi data.";
 	$language["progress_note_ok"] = "The wifi credentials seem to be fine! The installation is complete.";
-	$language["progress_note_nok"] = "We could not connect your telraam to the wifi. Please verify the credentials.";
+	$language["progress_note_nok"] = "We could not establish a wifi connection. It is possible that the connection was successful after all. You can check this via the further installation steps in the dashboard.";
 	$language["wifi_network_loading"] = "We'll take a look at what wifi networks are available. Hold on...";
 	$language["wifi_network_loading_short"] = "Searching for Wifi networks";
 	$language["connection_active"] = "The connection with TELRAAM hotspot is active";
 	
 	$language["tab_camera_image"] = "Camera Positioning";
 	$language["tab_wifi"] = "Wifi connection";
-	$language["go_to_telraam"] = "telraam.net"
+	$language["go_to_telraam"] = "telraam.net";
+	$language["edit-password"] = "Adjust password";
 	
 	
 ?>

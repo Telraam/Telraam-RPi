@@ -22,6 +22,11 @@ $( document ).ready(function() {
 			input.attr("type", "password");
 		  }
 	});
+	// ----------- edit existing password
+	$( ".js-edit-password" ).click(function() {
+		$('.wifi-pwd-field-exist').hide();
+		$('.wifi-pwd-field').show();
+	});
 	
 	// ----------- refresh page
 	$( ".js-refresh" ).click(function() {
@@ -32,6 +37,7 @@ $( document ).ready(function() {
 	function startProgressBar() {
 		progressBarStarted = true;
 		$(".making-the-connection").show();
+		$('#progress-container').show();
 		$("#progress").removeClass("done");
 		$(".tab-link").addClass("disabled");
 		
@@ -63,7 +69,7 @@ $( document ).ready(function() {
 	// ----------- fade it out
 	function disableEverything() {
 		window.scrollTo(0, 0);
-		$('.body').css('cursor', 'not-allowed');
+		$('body').css('cursor', 'not-allowed');
 		$('.content').css('opacity', '0.4');
 		
 		$("input").prop('disabled', true);
@@ -76,7 +82,6 @@ $( document ).ready(function() {
 	
 	// ----------- back to normal
 	function enableEverything() {
-	
 		$("input").prop('disabled', false);
 		$(".tab-link").removeClass("disabled");
 		
@@ -85,7 +90,7 @@ $( document ).ready(function() {
 		$('.content').removeAttr("style");
 	}
 	
-	// ----------- clode modal
+	// ----------- close modal
 	$( ".js-close-connection-modal" ).click(function() {
 		 $(".making-the-connection").hide();
 		 $('#progress').css('width',  '0%'); 
@@ -110,7 +115,7 @@ $( document ).ready(function() {
 		$('#progress').css('width',  '100%'); 
 		$('#progress').addClass('done');
 		$('#progress').removeClass('waiting');
-
+		$('#progress-container').hide();
 	}
 
 	// ---------- wifi	

@@ -7,7 +7,7 @@
 	<head>
 		<title id="page_title"></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="../css/design.css?version=4" />
+		<link rel="stylesheet" href="../css/design.css?version=5" />
 		<script src="../lib/jquery-3.5.1.min.js"></script>
 	</head>
 
@@ -67,6 +67,10 @@ if (isset($_POST['conn_submit'])) {
 	}
 
 	$wifi_pwd = trim($_POST['wifi_pwd']);
+	if(empty($wifi_pwd)){	
+		$data=json_decode(file_get_contents($wifiFile),TRUE);											//no pwd given, resubmit of old wifi network
+		$wifi_pwd = $data["wifi_pwd"];
+	}
 
 	$data = array("wifi_ssid"=>$wifi_ssid, "wifi_pwd"=>$wifi_pwd);
 	file_put_contents($wifiFile, json_encode($data, JSON_PRETTY_PRINT));
@@ -78,7 +82,7 @@ if (isset($_POST['conn_submit'])) {
 $data=json_decode(file_get_contents($wifiFile),TRUE);
 $currentWifiSsid=$data["wifi_ssid"];
 $currentWifiPwd=$data["wifi_pwd"];
-
+$currentWifiPwdHidden=str_repeat("•", strlen($currentWifiPwd));
 
 // check for send_background setting
 $settingsFile='/home/pi/Telraam/Scripts/json/telraam_settings.json';
@@ -140,7 +144,7 @@ if (isset($_POST['conn_submit'])) {
 	//set the title after the languages are loaded
 	$("#page_title").html('<?php echo $language["welcome_title"]; ?>');
 </script>
-<script src="../js/main.js?version=4"></script>
+<script src="../js/main.js?version=5"></script>
 
 
 	<body>
@@ -253,12 +257,20 @@ if (isset($_POST['conn_submit'])) {
 							<div>
 								<label><?php echo $language["wifi_pwd"]; ?>:</label>
 							</div>
-							<div class="wifi-pwd-field">
-								<input type="password" id="pass_log_id"" name="wifi_pwd" value="<?php echo (($currentWifiPwd!==null) ? $currentWifiPwd : '') ?>">
-								<span toggle="#password-field" class="icon-field icon-eye toggle-password">Show/Hide</span>
-							</div>
+                            <div class="wifi-pwd-field" style="display: <?php echo ((!empty($currentWifiPwd)) ? 'none' : 'block') ?>  ">
+                                <input type="password" id="pass_log_id"" name="wifi_pwd">
+                                <span toggle="#password-field" class="icon-field icon-eye toggle-password">Show/Hide</span>
+                            </div>
+                            <?php if(!empty($currentWifiPwd)) { ?>
+                                <div class="wifi-pwd-field-exist">
+                                    <div class="password-dots">
+                                        <input type="text" value="<?php echo $currentWifiPwdHidden ?>" readonly></div>
+                                    <div class="edit-password"><a href="#" class="js-edit-password"><?php echo $language["edit-password"]; ?></a></div>
+                                </div>
+                            <?php } ?>
 
-						</div>
+
+                        </div>
 		
 						<div class="checkboxes">
 							<label for="send_background_checkbox">

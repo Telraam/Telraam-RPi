@@ -24,7 +24,7 @@ $checkModulo=$convert_arr[$chunk1_mod].$convert_arr[$chunk2_mod];
 
 <div class="box">
 
-    <h1>Telraam Setup</h1>
+    <img src="images/telraam-logo.svg" width="200">
     <div class="intro">Please select your language. You'll need to check the position of your camera, connect to the wifi and write down your serial number.</div>
     <div class="lang-box-container">
 		<?php $now=time()  //add epoch time to urls to prevent caching?>
