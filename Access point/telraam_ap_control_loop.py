@@ -20,7 +20,7 @@ STATUS_NOK=0
 
 # sleep timeintervals
 #CONTROL_LOOP_INTERVAL = 20
-#CONTROL_LOOP_INTERVAL = 2 * 60
+#CONTROL_LOOP_INTERVAL = 1 * 60
 CONTROL_LOOP_INTERVAL = 10 * 60
 START_UP_SLEEP_TIME = 15
 SERVICE_WAIT_TIME = 3
@@ -29,6 +29,9 @@ STARTUP_PERIOD = 100            #after reboot go into AP mode
 #wifi credentials file
 WIFI_CREDENTIALS_FILE='/home/pi/Telraam/Scripts/json/telraam_wifi.json'
 
+#stop hotspot from being active after 3 times
+STOP_HOTSPOT_MAX=3
+HOTSPOT_COUNTER=0
 
 #var and function for the interrupt from php
 BREAK_LOOP=False
@@ -109,6 +112,11 @@ def run_monitoring_service():
 
 def setup_access_point():
     print("Setting up access point...")
+    
+    global HOTSPOT_COUNTER
+    print('setup_access_point HOTSPOT_COUNTER: {counter}'.format(counter=HOTSPOT_COUNTER))
+    HOTSPOT_COUNTER+=1
+    
     # reset the config file with a static IP
     # first delete anything that was written after # TELRAAM
     file = open('/etc/dhcpcd.conf', 'r+')
@@ -142,8 +150,11 @@ def setup_access_point():
     print("... Pi was reset in AP mode.")
     print()
 
+def stop_access_point():
+	print("Stopping access point...")
 
-
+	p = subprocess.Popen(["sudo", "systemctl", "stop", "hostapd"])
+	p.communicate()
 
 def check_connection():
     # test the network connection by pinging the predefined (Google's) server
@@ -337,10 +348,21 @@ while True:
                 file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
                 file.close()
 
-                setup_access_point()
+                if(HOTSPOT_COUNTER>=STOP_HOTSPOT_MAX):
+                	stop_access_point()
+                else:
+                	setup_access_point()
 
             else:
                 print('... Pi is in AP mode (internal conflict).')
+                
+                print('internal conflict HOTSPOT_COUNTER: {counter}'.format(counter=HOTSPOT_COUNTER))
+                
+                if(HOTSPOT_COUNTER>=STOP_HOTSPOT_MAX):
+                	stop_access_point()
+                
+                HOTSPOT_COUNTER+=1
+                
 
         else:
             print("... The SSID was found, creating WPA supplicant, stopping hostapd service, starting dhcpcd service...")
@@ -409,6 +431,9 @@ while True:
                 file.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=BE\n")
                 file.close()
 
-                setup_access_point()
+                if(HOTSPOT_COUNTER>=STOP_HOTSPOT_MAX):
+                	stop_access_point()
+                else:
+                	setup_access_point()
 
 
