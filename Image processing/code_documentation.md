@@ -75,7 +75,7 @@ The following properties are transferred per contour: MAC address, time of the o
 
 **Implementation:** Right now this step is implemented on the RPi, but we need a) a more sophisticated method, b) consider moving it to the server side. 
 
-What right now is available is an algorithm based on (but extended with extra features) the main ideas presented [here](http://jorgemoreno.xyz/pycvtraffic.php)
+What right now is available is an algorithm based on (but extended with extra features) the main ideas presented [here](https://web.archive.org/web/20190906230454/http://jorgemoreno.xyz/pycvtraffic.php)
 
 The main loop is the following:
 1. Let’s assume we detect one object on the first frame. This is given an ID, and we save its properties into a dataframe. When we process the next frame, let’s assume we find two contours. For each of these we check if they are within a threshold to any object on the previous frame (we require that an object’s movement from the previous frame is maximum half the object’s larger axis – as small objects usually move slower), if yes, then we know we have found the same object on this frame, so it gets the same ID, if not, this is a new object with a new ID., etc.
